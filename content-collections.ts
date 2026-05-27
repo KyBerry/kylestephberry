@@ -33,7 +33,11 @@ const posts = defineCollection({
   }),
   transform: (doc, { skip }) => {
     if (doc.draft) return skip('post marked draft')
-    const slug = doc._meta.filePath.replace(/\.mdx$/, '').split('/').pop() ?? doc._meta.path
+    const slug =
+      doc._meta.filePath
+        .replace(/\.mdx$/, '')
+        .split('/')
+        .pop() ?? doc._meta.path
     // NOTE: MDX body rendering is deferred to Plan 6 (blog). That plan adds
     // @next/mdx + a createDefaultImport<ComponentType> for the .mdx file here.
     // Plan 2 only exposes metadata; the body string is not part of allPosts.
@@ -77,16 +81,11 @@ const showcase = defineCollection({
     const slug = dir
     const componentRelPath = path.join('content/showcase', dir, 'component.tsx')
 
-    const sourceText = await readFile(
-      path.resolve(process.cwd(), componentRelPath),
-      'utf-8',
-    )
+    const sourceText = await readFile(path.resolve(process.cwd(), componentRelPath), 'utf-8')
 
     const sourceHtml = await cache(sourceText, (code) => highlightCode(code, 'tsx'))
 
-    const Component = createDefaultImport<ComponentType>(
-      `@/content/showcase/${dir}/component`,
-    )
+    const Component = createDefaultImport<ComponentType>(`@/content/showcase/${dir}/component`)
 
     return {
       ...doc,
@@ -123,7 +122,11 @@ const designs = defineCollection({
     featured: z.boolean().default(false),
   }),
   transform: async (doc, { cache }) => {
-    const slug = doc._meta.filePath.replace(/\.ya?ml$/, '').split('/').pop() ?? doc._meta.path
+    const slug =
+      doc._meta.filePath
+        .replace(/\.ya?ml$/, '')
+        .split('/')
+        .pop() ?? doc._meta.path
 
     const blurDataURL = await cache(`blur:${doc.image}`, async () => {
       const absPath = path.resolve(process.cwd(), 'public', doc.image.replace(/^\//, ''))

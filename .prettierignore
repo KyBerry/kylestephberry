@@ -1,0 +1,13 @@
+# Mirror .gitignore — prettier should not scan generated or tooling artefacts.
+node_modules/
+.next/
+out/
+build/
+.content-collections/
+public/_pagefind/
+.vercel/
+*.tsbuildinfo
+next-env.d.ts
+
+# MCP tooling artefacts
+.playwright-mcp/

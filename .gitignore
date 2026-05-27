@@ -51,3 +51,6 @@ public/_pagefind/
 .vscode/
 .idea/
 *.swp
+
+# MCP tooling artefacts
+.playwright-mcp/
