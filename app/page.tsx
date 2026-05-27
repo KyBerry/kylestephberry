@@ -20,11 +20,7 @@ export default function HomePage() {
         <WorkTimeline entries={work.entries} />
       </Section>
 
-      <Section
-        eyebrow="Components"
-        heading="Interactive components"
-        seeAllHref="/components"
-      >
+      <Section eyebrow="Components" heading="Interactive components" seeAllHref="/components">
         {featuredShowcases.length === 0 ? (
           <p className="font-mono text-sm text-(--color-fg-subtle)">More coming soon.</p>
         ) : (
@@ -36,11 +32,7 @@ export default function HomePage() {
         )}
       </Section>
 
-      <Section
-        eyebrow="Designs"
-        heading="Selected design work"
-        seeAllHref="/designs"
-      >
+      <Section eyebrow="Designs" heading="Selected design work" seeAllHref="/designs">
         {featuredDesigns.length === 0 ? (
           <p className="font-mono text-sm text-(--color-fg-subtle)">More coming soon.</p>
         ) : (

@@ -15,10 +15,10 @@ export default function ComponentsIndexPage() {
   return (
     <Container variant="grid" as="section" className="py-24 md:py-32">
       <header className="mb-12 md:mb-16">
-        <p className="mb-4 font-mono text-xs uppercase tracking-[0.18em] text-(--color-fg-subtle)">
+        <p className="mb-4 font-mono text-xs tracking-[0.18em] text-(--color-fg-subtle) uppercase">
           Components
         </p>
-        <h1 className="text-balance text-4xl font-medium tracking-[-0.025em] text-(--color-fg) md:text-5xl">
+        <h1 className="text-4xl font-medium tracking-[-0.025em] text-balance text-(--color-fg) md:text-5xl">
           Interactive components
         </h1>
         <p className="mt-4 max-w-prose text-(--color-fg-muted)">

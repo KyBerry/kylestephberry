@@ -24,17 +24,13 @@ export function Section({
   children,
 }: SectionProps) {
   return (
-    <Container
-      as="section"
-      variant={containerVariant}
-      className={cn('py-16 md:py-24', className)}
-    >
+    <Container as="section" variant={containerVariant} className={cn('py-16 md:py-24', className)}>
       <header className="mb-10 flex items-end justify-between gap-6 md:mb-14">
         <div>
-          <p className="mb-3 font-mono text-xs uppercase tracking-[0.18em] text-(--color-fg-subtle)">
+          <p className="mb-3 font-mono text-xs tracking-[0.18em] text-(--color-fg-subtle) uppercase">
             {eyebrow}
           </p>
-          <h2 className="text-balance text-3xl font-medium tracking-[-0.02em] text-(--color-fg) md:text-4xl">
+          <h2 className="text-3xl font-medium tracking-[-0.02em] text-balance text-(--color-fg) md:text-4xl">
             {heading}
           </h2>
         </div>

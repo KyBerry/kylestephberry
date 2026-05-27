@@ -5,15 +5,15 @@ import { site } from '@/lib/site'
 export function Hero() {
   return (
     <Container variant="hero" as="section" className="pt-24 pb-12 md:pt-32 md:pb-16">
-      <p className="mb-6 font-mono text-xs uppercase tracking-[0.18em] text-(--color-fg-subtle)">
+      <p className="mb-6 font-mono text-xs tracking-[0.18em] text-(--color-fg-subtle) uppercase">
         {site.role}
       </p>
 
-      <h1 className="text-balance text-5xl font-medium tracking-[-0.025em] text-(--color-fg) md:text-6xl">
+      <h1 className="text-5xl font-medium tracking-[-0.025em] text-balance text-(--color-fg) md:text-6xl">
         {site.name}
       </h1>
 
-      <p className="mt-6 max-w-prose text-pretty text-lg leading-relaxed text-(--color-fg-muted)">
+      <p className="mt-6 max-w-prose text-lg leading-relaxed text-pretty text-(--color-fg-muted)">
         {site.shortBio}
       </p>
 

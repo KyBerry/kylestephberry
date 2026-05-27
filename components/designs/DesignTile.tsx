@@ -30,7 +30,7 @@ export function DesignTile({ entry, priority = false, className }: DesignTilePro
       <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 flex items-baseline justify-between gap-4 bg-gradient-to-t from-(--color-bg)/85 via-(--color-bg)/40 to-transparent px-4 py-3 opacity-0 transition-opacity group-hover:opacity-100">
         <span className="text-sm font-medium text-(--color-fg)">{entry.title}</span>
         {entry.tags[0] ? (
-          <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-(--color-fg-muted)">
+          <span className="font-mono text-[10px] tracking-[0.12em] text-(--color-fg-muted) uppercase">
             {entry.tags[0]}
           </span>
         ) : null}

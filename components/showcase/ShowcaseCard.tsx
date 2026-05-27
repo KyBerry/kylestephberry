@@ -52,7 +52,7 @@ export function ShowcaseCard({ entry, className }: ShowcaseCardProps) {
           {entry.title}
         </span>
         {entry.tags[0] ? (
-          <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-(--color-fg-subtle)">
+          <span className="font-mono text-[10px] tracking-[0.12em] text-(--color-fg-subtle) uppercase">
             {entry.tags[0]}
           </span>
         ) : null}

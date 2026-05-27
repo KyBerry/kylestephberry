@@ -21,7 +21,9 @@ export function PostCard({ post, className }: PostCardProps) {
         className,
       )}
     >
-      <p className="mb-2 font-mono text-xs text-(--color-fg-subtle)">{formatDate(post.publishedAt)}</p>
+      <p className="mb-2 font-mono text-xs text-(--color-fg-subtle)">
+        {formatDate(post.publishedAt)}
+      </p>
       <h3 className="text-lg font-medium tracking-[-0.01em] text-(--color-fg) transition-colors group-hover:text-(--color-accent)">
         {post.title}
       </h3>
