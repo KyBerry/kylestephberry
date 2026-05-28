@@ -20,3 +20,21 @@ export function featured<T extends WithDate & WithFeatured>(
     limit,
   )
 }
+
+type WithSlugAndTags = { slug: string; tags: string[] }
+
+/**
+ * Returns up to N items sharing at least one tag with the current item, sorted
+ * by `publishedAt` descending, excluding the current item itself.
+ */
+export function related<T extends WithDate & WithSlugAndTags>(
+  items: readonly T[],
+  current: T,
+  limit: number,
+): T[] {
+  const currentTags = new Set(current.tags)
+  return latest(
+    items.filter((item) => item.slug !== current.slug && item.tags.some((t) => currentTags.has(t))),
+    limit,
+  )
+}
