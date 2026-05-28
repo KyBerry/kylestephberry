@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import 'tw-animate-css';
 
 @theme {
   /* fonts: wired to next/font CSS variables in layout.tsx */
