@@ -67,7 +67,7 @@ export default function CommandPalette() {
       role="dialog"
       aria-label="Command palette"
       onKeyDown={onKeyDown}
-      className="mx-auto w-full max-w-md overflow-hidden rounded-lg border border-(--color-border-strong) bg-(--color-surface)"
+      className="mx-auto w-full max-w-md overflow-hidden rounded-(--radius-card) border border-(--color-border-strong) bg-(--color-surface)"
     >
       <div className="flex items-center gap-3 border-b border-(--color-border) px-4 py-3">
         <input
@@ -87,7 +87,7 @@ export default function CommandPalette() {
           }}
           className="w-full bg-transparent text-sm text-(--color-fg) placeholder:text-(--color-fg-subtle) focus:outline-none"
         />
-        <kbd className="shrink-0 rounded border border-(--color-border) bg-(--color-surface-hover) px-1.5 py-0.5 font-mono text-[10px] text-(--color-fg-subtle)">
+        <kbd className="shrink-0 rounded-md border border-(--color-border) bg-(--color-surface-hover) px-1.5 py-0.5 font-mono text-[10px] text-(--color-fg-subtle)">
           ⌘K
         </kbd>
       </div>
@@ -96,7 +96,7 @@ export default function CommandPalette() {
         id={listboxId}
         role="listbox"
         aria-label="Commands"
-        className="max-h-72 overflow-y-auto py-1"
+        className="scrollbar-thin max-h-72 overflow-y-auto py-1"
       >
         {filtered.length === 0 ? (
           <li className="px-4 py-3 font-mono text-xs text-(--color-fg-subtle)">
@@ -110,11 +110,11 @@ export default function CommandPalette() {
               role="option"
               aria-selected={i === activeIndex}
               onMouseEnter={() => setActiveIndex(i)}
-              className="flex cursor-default items-center justify-between gap-4 px-4 py-2.5 text-sm"
-              style={{
-                background: i === activeIndex ? 'var(--color-surface-hover)' : undefined,
-                color: i === activeIndex ? 'var(--color-fg)' : 'var(--color-fg-muted)',
-              }}
+              className={`flex cursor-default items-center justify-between gap-4 px-4 py-2.5 text-sm ${
+                i === activeIndex
+                  ? 'bg-(--color-surface-hover) text-(--color-fg)'
+                  : 'text-(--color-fg-muted)'
+              }`}
             >
               <span className="flex items-center gap-3">
                 <span className="w-16 font-mono text-[10px] text-(--color-fg-subtle)">
@@ -123,7 +123,7 @@ export default function CommandPalette() {
                 {cmd.label}
               </span>
               {cmd.shortcut ? (
-                <kbd className="rounded border border-(--color-border) bg-(--color-surface) px-1.5 py-0.5 font-mono text-[10px] text-(--color-fg-subtle)">
+                <kbd className="rounded-md border border-(--color-border) bg-(--color-surface) px-1.5 py-0.5 font-mono text-[10px] text-(--color-fg-subtle)">
                   {cmd.shortcut}
                 </kbd>
               ) : null}
