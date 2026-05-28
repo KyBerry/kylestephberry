@@ -25,7 +25,7 @@ export default function HomePage() {
           <p className="font-mono text-sm text-(--color-fg-subtle)">More coming soon.</p>
         ) : (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {featuredShowcases.map((entry) => (
+            {featuredShowcases.map(({ NotesMDX: _NotesMDX, ...entry }) => (
               <ShowcaseCard key={entry.slug} entry={entry} />
             ))}
           </div>

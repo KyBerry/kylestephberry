@@ -6,9 +6,10 @@ import {
 } from '@content-collections/core'
 import { z } from 'zod'
 import path from 'node:path'
-import { readFile } from 'node:fs/promises'
+import { readFile, readdir } from 'node:fs/promises'
 import sharp from 'sharp'
 import { highlightCode } from './lib/content/shiki'
+import { highlightCodeToHast } from './lib/content/shiki-hast'
 import type { ComponentType } from 'react'
 
 /* ---------------------------------------------------------------- *
@@ -76,26 +77,73 @@ const showcase = defineCollection({
     variants: z.array(z.string()).nullable().default(null),
   }),
   transform: async (doc, { cache }) => {
-    // doc._meta.filePath looks like 'hello-button/index.mdx' (relative to the collection dir)
     const dir = path.dirname(doc._meta.filePath)
     const slug = dir
     const componentRelPath = path.join('content/showcase', dir, 'component.tsx')
+    const variantsDirRel = path.join('content/showcase', dir, 'variants')
 
-    const sourceText = await readFile(path.resolve(process.cwd(), componentRelPath), 'utf-8')
+    // Default component source + HAST tree
+    const sourceText = await readFile(
+      path.resolve(process.cwd(), componentRelPath),
+      'utf-8',
+    )
+    const sourceHast = await cache(`hast:${slug}:default:${sourceText.length}`, () =>
+      highlightCodeToHast(sourceText, 'tsx'),
+    )
 
-    const sourceHtml = await cache(sourceText, (code) => highlightCode(code, 'tsx'))
+    // Notes (MDX body of index.mdx), bundled by Next via static import
+    const NotesMDX = createDefaultImport<ComponentType>(
+      `@/content/showcase/${dir}/index.mdx`,
+    )
 
-    const Component = createDefaultImport<ComponentType>(`@/content/showcase/${dir}/component`)
+    // Default component, bundled via static import
+    const Component = createDefaultImport<ComponentType>(
+      `@/content/showcase/${dir}/component`,
+    )
+
+    // Variant sources: read any *.tsx in variants/ (filtered by frontmatter allow-list if given)
+    type VariantRecord = { sourceText: string; sourceHast: Awaited<ReturnType<typeof highlightCodeToHast>> }
+    const variantSources: Record<string, VariantRecord> = {}
+    const variantComponents: Record<string, ReturnType<typeof createDefaultImport<ComponentType>>> = {}
+
+    let variantFiles: string[] = []
+    try {
+      const all = await readdir(path.resolve(process.cwd(), variantsDirRel))
+      variantFiles = all.filter((f) => f.endsWith('.tsx'))
+    } catch {
+      // No variants directory — leave variantSources empty.
+    }
+
+    if (doc.variants && doc.variants.length > 0) {
+      const allow = new Set(doc.variants)
+      variantFiles = variantFiles.filter((f) => allow.has(f))
+    }
+
+    for (const file of variantFiles) {
+      const name = file.replace(/\.tsx$/, '')
+      const text = await readFile(
+        path.resolve(process.cwd(), variantsDirRel, file),
+        'utf-8',
+      )
+      const hast = await cache(`hast:${slug}:${name}:${text.length}`, () =>
+        highlightCodeToHast(text, 'tsx'),
+      )
+      variantSources[name] = { sourceText: text, sourceHast: hast }
+      variantComponents[name] = createDefaultImport<ComponentType>(
+        `@/content/showcase/${dir}/variants/${name}`,
+      )
+    }
 
     return {
       ...doc,
       slug,
       url: `/components/${slug}`,
       sourceText,
-      sourceHtml,
+      sourceHast,
       Component,
-      // Plan 4 will populate variant sources; for Plan 2 we leave them empty.
-      variantSources: {} as Record<string, { sourceText: string; sourceHtml: string }>,
+      NotesMDX,
+      variantSources,
+      variantComponents,
     }
   },
 })

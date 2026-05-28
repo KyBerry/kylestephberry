@@ -5,8 +5,12 @@ import Link from 'next/link'
 import type { Showcase } from 'content-collections'
 import { cn } from '@/lib/utils/cn'
 
+// Card consumes only a small slice of the entry — narrowing the prop type
+// keeps the boundary clean (omits the server-only NotesMDX function ref).
+type CardEntry = Pick<Showcase, 'url' | 'title' | 'tags' | 'Component'>
+
 interface ShowcaseCardProps {
-  entry: Showcase
+  entry: CardEntry
   className?: string
 }
 
