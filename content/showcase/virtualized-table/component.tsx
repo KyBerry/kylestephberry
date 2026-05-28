@@ -157,6 +157,47 @@ function nextDirection(current: SortDirection): SortDirection {
   return current === 'ascending' ? 'descending' : 'ascending'
 }
 
+function ColumnHeader({
+  column,
+  index,
+  sort,
+  onSort,
+}: {
+  column: Column
+  index: number
+  sort: { key: SortKey; direction: SortDirection }
+  onSort: (key: SortKey) => void
+}) {
+  const isSorted = sort.key === column.key
+  const isRight = column.align === 'right'
+  const glyph = isSorted ? (sort.direction === 'ascending' ? '↑' : '↓') : '↕'
+
+  return (
+    <div
+      role="columnheader"
+      aria-colindex={index + 1}
+      aria-sort={isSorted ? sort.direction : undefined}
+      className={isRight ? 'text-right' : 'text-left'}
+    >
+      <button
+        type="button"
+        onClick={() => onSort(column.key)}
+        className={`flex w-full items-center gap-1.5 px-3 py-2.5 font-mono text-[10px] tracking-[0.12em] text-(--color-fg-subtle) uppercase transition-colors hover:text-(--color-fg) ${
+          isRight ? 'flex-row-reverse' : ''
+        }`}
+      >
+        <span>{column.label}</span>
+        <span
+          aria-hidden="true"
+          className={isSorted ? 'text-(--color-accent)' : 'text-(--color-fg-subtle)/60'}
+        >
+          {glyph}
+        </span>
+      </button>
+    </div>
+  )
+}
+
 export default function VirtualizedTable() {
   const rows = useMemo(() => buildRows(), [])
   const [sort, setSort] = useState<{ key: SortKey; direction: SortDirection }>({
@@ -258,7 +299,7 @@ export default function VirtualizedTable() {
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-3 text-sm">
       <style>{`
         @media (prefers-reduced-motion: no-preference) {
-          .virtual-row { transition: background-color 120ms ease, box-shadow 120ms ease; }
+          .virtual-row { transition: background-color 120ms ease; }
         }
       `}</style>
 
@@ -284,7 +325,7 @@ export default function VirtualizedTable() {
         aria-activedescendant={activeRowId ? `row-${activeRowId}` : undefined}
         tabIndex={0}
         onKeyDown={onGridKeyDown}
-        className="overflow-hidden rounded-lg border border-(--color-border) bg-(--color-surface) shadow-[0_18px_60px_color-mix(in_srgb,var(--color-bg)_65%,transparent)] ring-0 outline-none focus-visible:border-(--color-accent)"
+        className="overflow-hidden rounded-(--radius-card) border border-(--color-border) bg-(--color-surface) outline-none focus-visible:border-(--color-accent)"
       >
         <div
           role="row"
@@ -292,36 +333,22 @@ export default function VirtualizedTable() {
           className="sticky top-0 z-10 grid border-b border-(--color-border) bg-(--color-surface) text-left"
           style={{ gridTemplateColumns: GRID_COLUMNS }}
         >
-          {COLUMNS.map((column, index) => {
-            const isSorted = sort.key === column.key
-            return (
-              <div
-                key={column.key}
-                role="columnheader"
-                aria-colindex={index + 1}
-                aria-sort={isSorted ? sort.direction : undefined}
-                className={column.align === 'right' ? 'text-right' : 'text-left'}
-              >
-                <button
-                  type="button"
-                  onClick={() => toggleSort(column.key)}
-                  className="flex w-full items-center justify-between gap-2 px-3 py-2.5 font-mono text-[10px] tracking-[0.12em] text-(--color-fg-subtle) uppercase transition-colors hover:text-(--color-fg)"
-                >
-                  <span>{column.label}</span>
-                  <span aria-hidden="true" className="text-(--color-accent)">
-                    {isSorted ? (sort.direction === 'ascending' ? 'ASC' : 'DESC') : 'SORT'}
-                  </span>
-                </button>
-              </div>
-            )
-          })}
+          {COLUMNS.map((column, index) => (
+            <ColumnHeader
+              key={column.key}
+              column={column}
+              index={index}
+              sort={sort}
+              onSort={toggleSort}
+            />
+          ))}
         </div>
 
         <div
           ref={scrollRef}
           role="rowgroup"
           onScroll={onScroll}
-          className="overflow-y-auto"
+          className="scrollbar-thin overflow-y-auto"
           style={{ height: VIEWPORT_HEIGHT }}
         >
           <div className="relative" style={{ height: totalHeight }}>
