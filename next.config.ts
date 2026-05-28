@@ -11,8 +11,12 @@ const rehypePrettyCodeOptions = {
 const withMDX = createMDX({
   extension: /\.mdx?$/,
   options: {
-    remarkPlugins: [],
     // Strings rather than imports so Turbopack can serialize loader options.
+    // remark-frontmatter recognises the ---...--- block so it isn't rendered
+    // as page text. content-collections still parses the frontmatter
+    // separately for typing; this plugin just tells the MDX compiler to
+    // skip it.
+    remarkPlugins: [['remark-frontmatter', ['yaml']]],
     rehypePlugins: [['rehype-pretty-code', rehypePrettyCodeOptions]],
   },
 })
