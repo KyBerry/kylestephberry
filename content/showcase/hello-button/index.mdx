@@ -1,10 +1,16 @@
 ---
 title: 'Hello button'
-summary: 'A first showcase entry — a button that animates a tiny stagger on click.'
+summary: 'A first showcase entry — a button that increments a counter on click.'
 publishedAt: '2026-05-20'
-tags: ['button', 'motion']
+tags: ['button', 'click']
 featured: true
 mountStrategy: 'always'
 ---
 
-A throwaway component used to verify the showcase pipeline. The real catalog comes online when Plan 4 ships the `<ShowcaseFrame>`.
+A trivial component used to exercise the showcase pipeline end-to-end. Click
+the button; the counter under it goes up. The point isn't the interaction —
+it's the surrounding scaffolding: schema validation, transform extracting the
+source text, Shiki highlighting at build time, and Next bundling the component
+itself so it can render live inside the frame.
+
+A real component catalog grows in over time.
