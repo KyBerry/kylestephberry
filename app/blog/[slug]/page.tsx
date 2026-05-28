@@ -6,6 +6,8 @@ import { ArrowLeft, ArrowRight } from '@phosphor-icons/react/dist/ssr'
 import { Container } from '@/components/ui/Container'
 import { PostMeta } from '@/components/blog/PostMeta'
 import { TableOfContents } from '@/components/blog/TableOfContents'
+import { JsonLd } from '@/components/seo/JsonLd'
+import { site } from '@/lib/site'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -49,8 +51,20 @@ export default async function PostPage({ params }: PageProps) {
   const olderLink =
     post.olderSlug && post.olderTitle ? { slug: post.olderSlug, title: post.olderTitle } : null
 
+  const ld = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.summary,
+    datePublished: post.publishedAt,
+    dateModified: post.updatedAt ?? post.publishedAt,
+    author: { '@type': 'Person', name: site.name, url: site.url },
+    mainEntityOfPage: `${site.url}${post.url}`,
+  }
+
   return (
     <>
+      <JsonLd data={ld} />
       <Container variant="grid" as="section" className="pt-16 pb-8 md:pt-24">
         <Link
           href="/blog"
