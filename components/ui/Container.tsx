@@ -5,7 +5,7 @@ type ContainerVariant = 'prose' | 'grid' | 'hero'
 
 interface ContainerProps extends HTMLAttributes<HTMLDivElement> {
   variant?: ContainerVariant
-  as?: 'div' | 'section' | 'article' | 'main' | 'header' | 'footer'
+  as?: 'div' | 'section' | 'article' | 'main' | 'header' | 'footer' | 'nav'
 }
 
 const variantClass: Record<ContainerVariant, string> = {
