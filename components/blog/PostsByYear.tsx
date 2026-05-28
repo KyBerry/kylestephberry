@@ -6,8 +6,11 @@ import type { Post } from 'content-collections'
 import Link from 'next/link'
 import { TagChips } from '@/components/ui/TagChips'
 
+// Posts crossing into the client need MDXContent (a bare function ref) stripped.
+type PostListItem = Omit<Post, 'MDXContent'>
+
 interface PostsByYearProps {
-  posts: Post[]
+  posts: PostListItem[]
 }
 
 function formatDate(iso: string): string {
@@ -33,7 +36,7 @@ export function PostsByYear({ posts }: PostsByYearProps) {
   )
 
   const byYear = useMemo(() => {
-    const groups = new Map<string, Post[]>()
+    const groups = new Map<string, PostListItem[]>()
     for (const p of visible) {
       const year = p.publishedAt.slice(0, 4)
       const arr = groups.get(year) ?? []

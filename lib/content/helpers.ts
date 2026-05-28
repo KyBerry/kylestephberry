@@ -35,6 +35,21 @@ export function withoutNotes<T extends { NotesMDX: unknown }>(item: T): Omit<T, 
   return copy
 }
 
+/**
+ * Drops the server-only `MDXContent` component reference from a post entry.
+ *
+ * Same RSC-serialization issue as `withoutNotes` — bare function refs can't
+ * cross into a client component. Use this before handing posts to any
+ * `'use client'` component (lists, filters, etc.).
+ */
+export function withoutMDXContent<T extends { MDXContent: unknown }>(
+  item: T,
+): Omit<T, 'MDXContent'> {
+  const copy: Omit<T, 'MDXContent'> & { MDXContent?: T['MDXContent'] } = { ...item }
+  delete copy.MDXContent
+  return copy
+}
+
 type WithSlugAndTags = { slug: string; tags: string[] }
 
 /**

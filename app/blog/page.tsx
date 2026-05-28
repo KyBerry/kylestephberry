@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { allPosts } from 'content-collections'
 import { Container } from '@/components/ui/Container'
 import { PostsByYear } from '@/components/blog/PostsByYear'
-import { latest } from '@/lib/content/helpers'
+import { latest, withoutMDXContent } from '@/lib/content/helpers'
 
 export const metadata: Metadata = {
   title: 'Writing',
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 }
 
 export default function BlogIndexPage() {
-  const all = latest(allPosts, allPosts.length)
+  const all = latest(allPosts, allPosts.length).map(withoutMDXContent)
 
   return (
     <Container variant="grid" as="section" className="py-24 md:py-32">
