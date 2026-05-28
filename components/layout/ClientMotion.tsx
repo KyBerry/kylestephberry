@@ -1,30 +1,46 @@
 'use client'
 
-import type { ReactNode } from 'react'
-
-import { LenisProvider } from './LenisProvider'
-import { PageTransition } from './PageTransition'
+import { useEffect, useState, type ComponentType, type ReactNode } from 'react'
 
 interface ClientMotionProps {
   children: ReactNode
 }
 
+type MotionLayerComponent = ComponentType<{ children: ReactNode }>
+
 /**
- * Single client-side entry point for motion + smooth scroll.
+ * Client-only entry point for motion + smooth scroll.
  *
- * Mounts Lenis (smooth-scroll RAF loop, auto-disabled on
- * `prefers-reduced-motion`) and wraps page content in `PageTransition`
- * (motion/react `AnimatePresence` fade/slide between routes).
+ * Renders `children` directly on first paint (matching the SSR'd HTML
+ * so content is fully indexable and visible immediately) and lazily
+ * imports `MotionLayer` after hydration. `MotionLayer` pulls in
+ * `motion` and `lenis`; deferring its load keeps both off the
+ * critical-path bundle.
  *
- * Imported lazily via `next/dynamic({ ssr: false })` from
- * `app/layout.tsx` so neither `lenis` nor `motion` ship in the
- * server-rendered HTML or the initial JS bundle.
+ * Trade-off: when `MotionLayer` finishes loading it replaces this
+ * subtree, which causes a one-time re-mount of `children`. That's
+ * acceptable here because `children` has no client-side state on
+ * initial paint (paths render server-side; interactive widgets
+ * mount fresh anyway).
  */
 export function ClientMotion({ children }: ClientMotionProps) {
-  return (
-    <>
-      <LenisProvider />
-      <PageTransition>{children}</PageTransition>
-    </>
-  )
+  const [MotionLayer, setMotionLayer] = useState<MotionLayerComponent | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    void import('./MotionLayer').then((mod) => {
+      if (!cancelled) {
+        setMotionLayer(() => mod.MotionLayer)
+      }
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  if (MotionLayer) {
+    return <MotionLayer>{children}</MotionLayer>
+  }
+
+  return <>{children}</>
 }
