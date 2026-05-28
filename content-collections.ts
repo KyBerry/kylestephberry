@@ -6,10 +6,13 @@ import {
 } from '@content-collections/core'
 import { z } from 'zod'
 import path from 'node:path'
-import { readFile, readdir } from 'node:fs/promises'
+import { readFile, readdir, stat } from 'node:fs/promises'
+import { createHash } from 'node:crypto'
 import sharp from 'sharp'
 import { highlightCodeToHast } from './lib/content/shiki-hast'
 import type { ComponentType } from 'react'
+
+const hashSource = (s: string) => createHash('sha1').update(s).digest('hex').slice(0, 12)
 
 /* ---------------------------------------------------------------- *
  * Posts
@@ -119,7 +122,7 @@ const showcase = defineCollection({
 
     // Default component source + HAST tree
     const sourceText = await readFile(path.resolve(process.cwd(), componentRelPath), 'utf-8')
-    const sourceHast = await cache(`hast:${slug}:default:${sourceText.length}`, () =>
+    const sourceHast = await cache(`hast:${slug}:default:${hashSource(sourceText)}`, () =>
       highlightCodeToHast(sourceText, 'tsx'),
     )
 
@@ -156,7 +159,7 @@ const showcase = defineCollection({
     for (const file of variantFiles) {
       const name = file.replace(/\.tsx$/, '')
       const text = await readFile(path.resolve(process.cwd(), variantsDirRel, file), 'utf-8')
-      const hast = await cache(`hast:${slug}:${name}:${text.length}`, () =>
+      const hast = await cache(`hast:${slug}:${name}:${hashSource(text)}`, () =>
         highlightCodeToHast(text, 'tsx'),
       )
       variantSources[name] = { sourceText: text, sourceHast: hast }
@@ -242,14 +245,21 @@ const designs = defineCollection({
         .split('/')
         .pop() ?? doc._meta.path
 
-    // Prefer the prebuilt cache (populated by scripts/derive-design-blurhashes.ts).
+    // Prefer the prebuilt cache (populated by scripts/derive-design-blurhashes.ts),
+    // but only when its stored mtime still matches the file on disk. Otherwise an
+    // image swapped during `pnpm dev` (without re-running the prebuild) would serve
+    // a stale blur.
     const blurCache = await loadDesignBlurCache()
     const cached = blurCache[doc.image]
+    const imageStat = await stat(
+      path.resolve(process.cwd(), 'public', doc.image.replace(/^\//, '')),
+    ).catch(() => ({ mtimeMs: 0 }))
     const blurDataURL =
-      cached?.blurDataURL ??
-      // Fallback: compute inline (e.g. `pnpm dev` without a prebuild).
-      // content-collections' own cache keeps this from re-running unchanged.
-      (await cache(`blur:${doc.image}`, () => computeDesignBlur(doc.image)))
+      cached && cached.mtime === imageStat.mtimeMs
+        ? cached.blurDataURL
+        : // Fallback: compute inline (e.g. `pnpm dev` without a prebuild, or a stale entry).
+          // content-collections' own cache keeps this from re-running unchanged.
+          await cache(`blur:${doc.image}`, () => computeDesignBlur(doc.image))
 
     return {
       ...doc,

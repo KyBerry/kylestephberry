@@ -162,7 +162,14 @@ export default function AiMessagePanel() {
         </section>
 
         <section aria-label="Assistant message" className="max-w-[94%]">
-          <p aria-live="polite" className="min-h-24 leading-relaxed text-(--color-fg)">
+          <p
+            aria-live="polite"
+            // aria-busy true while streaming suppresses per-token announcements
+            // (~every 50ms); on completion it flips false so the finished
+            // response is announced once as a single polite update.
+            aria-busy={status === 'streaming'}
+            className="min-h-24 leading-relaxed text-(--color-fg)"
+          >
             {displayed}
             {status === 'streaming' ? (
               <span
@@ -205,7 +212,13 @@ export default function AiMessagePanel() {
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-(--color-border) px-5 py-4">
-        <span className="font-mono text-[10px] text-(--color-fg-subtle)" aria-live="polite">
+        <span
+          className="font-mono text-[10px] text-(--color-fg-subtle)"
+          aria-live="polite"
+          // The running "n / m tokens" count ticks every token; aria-busy holds
+          // announcements until streaming ends, then the final summary is read once.
+          aria-busy={status === 'streaming'}
+        >
           {status === 'streaming'
             ? `${tokenIndex} / ${RESPONSE_TOKENS.length} tokens`
             : status === 'done'

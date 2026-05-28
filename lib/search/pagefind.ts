@@ -31,13 +31,29 @@ export async function getPagefind(): Promise<PagefindRuntime> {
   return mod
 }
 
+/**
+ * Pagefind indexes the built `.html` files under `.next/server/app`, so result
+ * URLs arrive as `/blog/slug.html` (or `/index.html`). Those paths 404 under the
+ * App Router, which serves `/blog/slug`. Map them back to the real route.
+ */
+function cleanUrl(url: string): string {
+  const path = url.split(/[?#]/, 1)[0] ?? url
+  const suffix = url.slice(path.length)
+  const cleaned = path.replace(/\/?index\.html$/, '/').replace(/\.html$/, '')
+  return (cleaned.replace(/(.)\/$/, '$1') || '/') + suffix
+}
+
 export async function search(query: string) {
   const pf = await getPagefind()
   const trimmed = query.trim()
   if (trimmed.length < 2) return []
   const res = await pf.search(trimmed)
   const data = await Promise.all(res.results.slice(0, 20).map((r) => r.data()))
-  return data
+  return data.map((r) => ({
+    ...r,
+    url: cleanUrl(r.url),
+    sub_results: r.sub_results?.map((s) => ({ ...s, url: cleanUrl(s.url) })) ?? [],
+  }))
 }
 
 export interface GroupedResults {

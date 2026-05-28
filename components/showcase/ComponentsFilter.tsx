@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import type { Showcase } from 'content-collections'
 import { TagChips } from '@/components/ui/TagChips'
@@ -17,8 +17,7 @@ interface ComponentsFilterProps {
 export function ComponentsFilter({ entries }: ComponentsFilterProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const urlTag = searchParams.get('tag')
-  const [active, setActive] = useState<string | null>(urlTag)
+  const active = searchParams.get('tag')
 
   const tagCounts = useMemo(() => {
     const m = new Map<string, number>()
@@ -34,7 +33,6 @@ export function ComponentsFilter({ entries }: ComponentsFilterProps) {
   )
 
   function handleChange(tag: string | null) {
-    setActive(tag)
     const params = new URLSearchParams(searchParams.toString())
     if (tag) params.set('tag', tag)
     else params.delete('tag')

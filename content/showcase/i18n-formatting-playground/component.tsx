@@ -136,6 +136,9 @@ function formatPreview(locale: LocaleOption, reviewerCount: number) {
   const date = new Intl.DateTimeFormat(numberLocale, {
     dateStyle: 'full',
     timeStyle: 'short',
+    // Pin to UTC so SSR (build TZ) and client (runtime TZ) format the same
+    // string — otherwise the time differs and React reports a hydration mismatch.
+    timeZone: 'UTC',
   })
   const compact = new Intl.NumberFormat(numberLocale, {
     notation: 'compact',

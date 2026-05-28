@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import type { Design } from 'content-collections'
 import { TagChips } from '@/components/ui/TagChips'
@@ -36,6 +36,22 @@ export function DesignsGallery({ entries }: DesignsGalleryProps) {
   const openEntry = openIndex >= 0 ? (visible[openIndex] ?? null) : null
   const hasPrev = openIndex > 0
   const hasNext = openIndex >= 0 && openIndex < visible.length - 1
+
+  // The lightbox opens from a URL-state <Link>, not a Radix Dialog.Trigger, so
+  // Radix restores focus to <body> on close. Remember the slug that was open and
+  // move focus back to its tile once the dialog has unmounted. The timeout runs
+  // after Radix's own setTimeout restore (registered during the same commit),
+  // so this lands last and wins.
+  const lastOpenSlug = useRef<string | null>(null)
+  useEffect(() => {
+    const prevSlug = lastOpenSlug.current
+    lastOpenSlug.current = activeSlug
+    if (activeSlug || !prevSlug) return
+    const id = window.setTimeout(() => {
+      document.getElementById(`design-tile-${prevSlug}`)?.focus()
+    }, 0)
+    return () => window.clearTimeout(id)
+  }, [activeSlug])
 
   const setParams = useCallback(
     (mutate: (p: URLSearchParams) => void) => {
@@ -94,7 +110,7 @@ export function DesignsGallery({ entries }: DesignsGalleryProps) {
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {visible.map((entry, i) => (
-            <DesignTile key={entry.slug} entry={entry} priority={i < 3} index={i} />
+            <DesignTile key={entry.slug} entry={entry} priority={i < 1} index={i} />
           ))}
         </div>
       )}

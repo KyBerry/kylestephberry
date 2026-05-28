@@ -112,6 +112,10 @@ export default function AiStreamComponent() {
         <div
           ref={outputRef}
           aria-live="polite"
+          // While streaming, aria-busy suppresses per-token announcements (~every
+          // 50ms = spam); flipping to false on 'done' announces the finished
+          // response once as a single polite update.
+          aria-busy={status === 'streaming'}
           aria-label="AI response"
           className="scrollbar-thin max-h-48 overflow-y-auto border-t border-(--color-border) bg-(--color-bg) px-5 py-4 leading-relaxed text-(--color-fg)"
         >

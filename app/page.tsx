@@ -6,6 +6,36 @@ import { ShowcaseCard } from '@/components/showcase/ShowcaseCard'
 import { DesignTile } from '@/components/designs/DesignTile'
 import { PostCard } from '@/components/blog/PostCard'
 import { featured, latest, withoutNotes } from '@/lib/content/helpers'
+import { JsonLd } from '@/components/seo/JsonLd'
+import { site } from '@/lib/site'
+
+const homeJsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': `${site.url}/#person`,
+      name: site.name,
+      url: site.url,
+      jobTitle: site.role,
+      email: `mailto:${site.email}`,
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Denver',
+        addressRegion: 'CO',
+        addressCountry: 'US',
+      },
+      sameAs: site.socials.map((s) => s.href),
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${site.url}/#website`,
+      url: site.url,
+      name: site.name,
+      publisher: { '@id': `${site.url}/#person` },
+    },
+  ],
+}
 
 export default function HomePage() {
   const featuredShowcases = featured(allShowcases, 6)
@@ -14,6 +44,7 @@ export default function HomePage() {
 
   return (
     <>
+      <JsonLd data={homeJsonLd} />
       <Hero />
 
       <Section
@@ -52,7 +83,7 @@ export default function HomePage() {
         ) : (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {featuredDesigns.map((entry, i) => (
-              <DesignTile key={entry.slug} entry={entry} priority={i < 4} index={i} />
+              <DesignTile key={entry.slug} entry={entry} priority={i < 2} index={i} />
             ))}
           </div>
         )}

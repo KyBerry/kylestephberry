@@ -68,18 +68,24 @@ export function DesignLightbox({
                 <button
                   type="button"
                   aria-label="Previous design"
-                  onClick={onPrev}
-                  disabled={!hasPrev}
-                  className="absolute top-1/2 left-4 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface)/80 text-(--color-fg-muted) backdrop-blur transition-colors hover:border-(--color-border-strong) hover:text-(--color-fg) disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-(--color-border) disabled:hover:text-(--color-fg-muted)"
+                  aria-disabled={!hasPrev}
+                  onClick={() => {
+                    if (!hasPrev) return
+                    onPrev()
+                  }}
+                  className="absolute top-1/2 left-4 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface)/80 text-(--color-fg-muted) backdrop-blur transition-colors hover:border-(--color-border-strong) hover:text-(--color-fg) aria-disabled:cursor-not-allowed aria-disabled:opacity-30 aria-disabled:hover:border-(--color-border) aria-disabled:hover:text-(--color-fg-muted)"
                 >
                   <ArrowLeft weight="regular" size={16} />
                 </button>
                 <button
                   type="button"
                   aria-label="Next design"
-                  onClick={onNext}
-                  disabled={!hasNext}
-                  className="absolute top-1/2 right-4 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface)/80 text-(--color-fg-muted) backdrop-blur transition-colors hover:border-(--color-border-strong) hover:text-(--color-fg) disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-(--color-border) disabled:hover:text-(--color-fg-muted)"
+                  aria-disabled={!hasNext}
+                  onClick={() => {
+                    if (!hasNext) return
+                    onNext()
+                  }}
+                  className="absolute top-1/2 right-4 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface)/80 text-(--color-fg-muted) backdrop-blur transition-colors hover:border-(--color-border-strong) hover:text-(--color-fg) aria-disabled:cursor-not-allowed aria-disabled:opacity-30 aria-disabled:hover:border-(--color-border) aria-disabled:hover:text-(--color-fg-muted)"
                 >
                   <ArrowRight weight="regular" size={16} />
                 </button>
@@ -94,7 +100,7 @@ export function DesignLightbox({
                     placeholder="blur"
                     blurDataURL={open.blurDataURL}
                     sizes="90vw"
-                    className="max-h-[80vh] w-auto rounded border border-(--color-border) object-contain"
+                    className="max-h-[80vh] w-auto rounded-md border border-(--color-border) object-contain"
                   />
                 </div>
               </div>
@@ -130,7 +136,7 @@ export function DesignLightbox({
                     {open.tags.map((tag) => (
                       <li
                         key={tag}
-                        className="rounded border border-(--color-border) px-2 py-0.5 font-mono text-[10px] tracking-[0.12em] text-(--color-fg-muted) uppercase"
+                        className="rounded-md border border-(--color-border) px-2 py-0.5 font-mono text-[10px] tracking-[0.12em] text-(--color-fg-muted) uppercase"
                       >
                         {tag}
                       </li>

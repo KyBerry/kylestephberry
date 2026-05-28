@@ -65,10 +65,14 @@ export function ScaledStage({
   }, [inset, maxScale])
 
   useEffect(() => {
+    // Measure once after layout (poster fit on first paint) and again only when
+    // the STAGE (card) resizes. The content node is deliberately NOT observed:
+    // live demos inside animate (count-up, AI typing) and mutate every frame,
+    // which would otherwise re-fire measure continuously. Content natural size
+    // is read inside measure via contentRef, but its mutations don't trigger it.
     measure()
     const ro = new ResizeObserver(measure)
     if (stageRef.current) ro.observe(stageRef.current)
-    if (contentRef.current) ro.observe(contentRef.current)
     return () => ro.disconnect()
   }, [measure])
 

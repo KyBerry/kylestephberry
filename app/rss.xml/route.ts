@@ -10,6 +10,12 @@ function esc(s: string): string {
     .replace(/'/g, '&apos;')
 }
 
+function toAtomDate(s: string): string {
+  return s.includes('T') ? s : `${s}T00:00:00Z`
+}
+
+export const dynamic = 'force-static'
+
 export function GET(): Response {
   const posts = [...allPosts].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
   const updated = posts[0]?.publishedAt ?? new Date().toISOString()
@@ -21,7 +27,7 @@ export function GET(): Response {
     <title>${esc(p.title)}</title>
     <link href="${esc(url)}"/>
     <id>${esc(url)}</id>
-    <updated>${esc(p.updatedAt ?? p.publishedAt)}T00:00:00Z</updated>
+    <updated>${esc(toAtomDate(p.updatedAt ?? p.publishedAt))}</updated>
     <published>${esc(p.publishedAt)}T00:00:00Z</published>
     <summary>${esc(p.summary)}</summary>
   </entry>`
@@ -34,7 +40,7 @@ export function GET(): Response {
   <link href="${esc(site.url)}/rss.xml" rel="self"/>
   <link href="${esc(site.url)}"/>
   <id>${esc(site.url)}/</id>
-  <updated>${esc(updated)}T00:00:00Z</updated>
+  <updated>${esc(toAtomDate(updated))}</updated>
   <author>
     <name>${esc(site.name)}</name>
     <email>${esc(site.email)}</email>

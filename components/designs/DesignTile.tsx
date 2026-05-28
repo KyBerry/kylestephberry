@@ -22,6 +22,7 @@ export function DesignTile({ entry, priority = false, index = 0, className }: De
   return (
     <FadeIn delay={delay}>
       <Link
+        id={`design-tile-${entry.slug}`}
         href={`/designs?design=${encodeURIComponent(entry.slug)}`}
         scroll={false}
         className={cn(
@@ -36,7 +37,7 @@ export function DesignTile({ entry, priority = false, index = 0, className }: De
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
           placeholder="blur"
           blurDataURL={entry.blurDataURL}
-          priority={priority}
+          preload={priority}
           className="object-contain p-2 transition-transform group-hover:scale-[1.02]"
         />
 

@@ -1,14 +1,18 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ComponentType } from 'react'
 import Link from 'next/link'
 import { MagnifyingGlass } from '@phosphor-icons/react/dist/ssr'
 import { Container } from '@/components/ui/Container'
 import { site } from '@/lib/site'
-import { CommandPalette } from './CommandPalette'
+import type { CommandPaletteProps } from './CommandPalette'
 
 export function Header() {
   const [open, setOpen] = useState(false)
+  // Lazy-load the command palette (and its Radix Dialog dependency) only after
+  // the first open. Keeping the static import out of this root-layout client
+  // component keeps @radix-ui/react-dialog off every route's first-load bundle.
+  const [Palette, setPalette] = useState<ComponentType<CommandPaletteProps> | null>(null)
 
   useEffect(() => {
     function handle(e: KeyboardEvent) {
@@ -20,6 +24,21 @@ export function Header() {
     window.addEventListener('keydown', handle)
     return () => window.removeEventListener('keydown', handle)
   }, [])
+
+  // Fetch the palette chunk the first time it's needed. It mounts already-open,
+  // so its onOpenAutoFocus handler focuses the input on that first ⌘K / click.
+  useEffect(() => {
+    if (!open || Palette) return
+    let cancelled = false
+    void import('./CommandPalette').then((mod) => {
+      if (!cancelled) {
+        setPalette(() => mod.CommandPalette)
+      }
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [open, Palette])
 
   return (
     <>
@@ -58,7 +77,7 @@ export function Header() {
         </Container>
       </header>
 
-      <CommandPalette open={open} onOpenChange={setOpen} />
+      {Palette ? <Palette open={open} onOpenChange={setOpen} /> : null}
     </>
   )
 }

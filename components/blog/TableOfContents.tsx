@@ -25,8 +25,22 @@ export function TableOfContents({ targetSelector, className }: TableOfContentsPr
     if (!target) return
 
     const nodes = Array.from(target.querySelectorAll<HTMLHeadingElement>('h2, h3'))
+    // Track ids (including any rehype-assigned ones) so generated slugs for
+    // duplicate heading text don't collide and point the anchor at the wrong node.
+    const seen = new Set<string>()
     const list: Heading[] = nodes.map((n) => {
-      if (!n.id) n.id = n.textContent?.toLowerCase().replace(/[^a-z0-9]+/g, '-') ?? ''
+      if (!n.id) {
+        const base =
+          n.textContent
+            ?.toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '') || 'section'
+        let unique = base
+        let i = 2
+        while (seen.has(unique)) unique = `${base}-${i++}`
+        n.id = unique
+      }
+      seen.add(n.id)
       return {
         id: n.id,
         text: n.textContent?.trim() ?? '',

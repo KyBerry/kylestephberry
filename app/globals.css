@@ -14,7 +14,7 @@
   --color-border-strong: oklch(0.38 0.005 80 / 0.8);
   --color-fg: oklch(0.96 0.005 80);
   --color-fg-muted: oklch(0.72 0.005 80);
-  --color-fg-subtle: oklch(0.55 0.005 80);
+  --color-fg-subtle: oklch(0.63 0.005 80);
 
   /* single accent: sage */
   --color-accent: oklch(0.72 0.05 145);
@@ -216,5 +216,22 @@
   }
   .prose-portfolio :where(h2, h3, h4):first-child {
     margin-top: 0;
+  }
+}
+
+/*
+  Accessibility: honor prefers-reduced-motion for all CSS-driven animation and
+  transitions (covers the tw-animate-css Radix dialog enter/exit, hover
+  transitions, etc.). JS-driven motion (Lenis, FadeIn, parallax) self-gates
+  separately via matchMedia.
+*/
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
