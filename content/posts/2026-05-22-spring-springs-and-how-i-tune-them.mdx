@@ -1,0 +1,30 @@
+---
+title: 'Spring springs, and how I tune them'
+summary: 'Default spring physics rarely feel right. Here is the heuristic I lean on, with examples.'
+publishedAt: '2026-05-22'
+tags: ['motion', 'physics']
+featured: true
+---
+
+import { Callout } from '@/components/mdx/Callout'
+
+Most spring presets feel either floaty or twitchy. A short heuristic helps.
+
+## The shape I aim for
+
+Critically-damped springs settle without overshoot — fine for utility transitions
+(menus, modals). Slightly underdamped springs overshoot ~5–10% — better for
+hero motion, where the bounce reads as personality.
+
+<Callout type="tip">
+For UI surfaces (sheets, dialogs), pin damping near 0.9. For hero moments,
+drop to 0.7 and bump stiffness to taste.
+</Callout>
+
+## Numbers I keep handy
+
+- Sheet open: `{ stiffness: 380, damping: 36 }`
+- Modal in: `{ stiffness: 260, damping: 26 }`
+- Hero float: `{ stiffness: 120, damping: 14 }`
+
+You can derive more by ear, but this set covers most of what I reach for.
