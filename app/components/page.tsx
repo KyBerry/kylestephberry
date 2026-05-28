@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import { allShowcases } from 'content-collections'
 import { Container } from '@/components/ui/Container'
-import { ShowcaseCard } from '@/components/showcase/ShowcaseCard'
+import { ComponentsFilter } from '@/components/showcase/ComponentsFilter'
 import { latest } from '@/lib/content/helpers'
 
 export const metadata: Metadata = {
@@ -10,15 +11,19 @@ export const metadata: Metadata = {
 }
 
 export default function ComponentsIndexPage() {
-  const all = latest(allShowcases, allShowcases.length)
+  // Strip server-only NotesMDX function refs before handing off to the
+  // client filter — React can't serialize them across the RSC boundary.
+  const all = latest(allShowcases, allShowcases.length).map(
+    ({ NotesMDX: _NotesMDX, ...rest }) => rest,
+  )
 
   return (
     <Container variant="grid" as="section" className="py-24 md:py-32">
       <header className="mb-12 md:mb-16">
-        <p className="mb-4 font-mono text-xs tracking-[0.18em] text-(--color-fg-subtle) uppercase">
+        <p className="mb-4 font-mono text-xs uppercase tracking-[0.18em] text-(--color-fg-subtle)">
           Components
         </p>
-        <h1 className="text-4xl font-medium tracking-[-0.025em] text-balance text-(--color-fg) md:text-5xl">
+        <h1 className="text-balance text-4xl font-medium tracking-[-0.025em] text-(--color-fg) md:text-5xl">
           Interactive components
         </h1>
         <p className="mt-4 max-w-prose text-(--color-fg-muted)">
@@ -30,11 +35,9 @@ export default function ComponentsIndexPage() {
       {all.length === 0 ? (
         <p className="font-mono text-sm text-(--color-fg-subtle)">More coming soon.</p>
       ) : (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {all.map(({ NotesMDX: _NotesMDX, ...entry }) => (
-            <ShowcaseCard key={entry.slug} entry={entry} />
-          ))}
-        </div>
+        <Suspense fallback={null}>
+          <ComponentsFilter entries={all} />
+        </Suspense>
       )}
     </Container>
   )
