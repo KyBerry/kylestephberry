@@ -93,15 +93,15 @@ export default function AiStreamComponent() {
   useEffect(() => () => clearTimers(), [clearTimers])
 
   return (
-    <div className="flex w-full max-w-lg flex-col gap-3 font-mono text-sm">
-      <div className="flex items-center gap-2 rounded-md border border-(--color-border) bg-(--color-surface) px-3 py-2.5">
-        <span className="select-none text-(--color-fg-muted)">{'>'}</span>
+    <div className="flex w-full max-w-lg flex-col overflow-hidden rounded-(--radius-card) border border-(--color-border) bg-(--color-surface) font-mono text-sm">
+      <div className="flex items-center gap-2.5 px-5 py-4">
+        <span className="select-none text-(--color-fg-subtle)">{'>'}</span>
         <span className="flex-1 truncate text-(--color-fg-muted)">{PROMPT}</span>
         {status === 'idle' && (
           <button
             type="button"
             onClick={handleStream}
-            className="shrink-0 rounded-md border border-(--color-border-strong) bg-(--color-surface) px-2.5 py-1 text-xs text-(--color-fg) transition-opacity hover:opacity-70"
+            className="shrink-0 rounded-md border border-(--color-border-strong) bg-(--color-surface-hover) px-3 py-1 text-xs text-(--color-fg) transition-colors hover:border-(--color-accent)"
           >
             Send
           </button>
@@ -113,7 +113,7 @@ export default function AiStreamComponent() {
           ref={outputRef}
           aria-live="polite"
           aria-label="AI response"
-          className="scrollbar-thin max-h-48 overflow-y-auto rounded-md border border-(--color-border) bg-(--color-surface) px-3 py-2.5 leading-relaxed text-(--color-fg)"
+          className="scrollbar-thin max-h-48 overflow-y-auto border-t border-(--color-border) bg-(--color-bg) px-5 py-4 leading-relaxed text-(--color-fg)"
         >
           <span>{displayed}</span>
           {status === 'streaming' && (
@@ -128,8 +128,8 @@ export default function AiStreamComponent() {
         </div>
       )}
 
-      <div className="flex items-center justify-between">
-        <span className="text-xs text-(--color-fg-muted)">
+      <div className="flex items-center justify-between gap-3 border-t border-(--color-border) px-5 py-3">
+        <span className="text-[10px] tracking-[0.14em] text-(--color-fg-subtle) uppercase">
           {status === 'idle' && 'Ready'}
           {status === 'streaming' && 'Streaming\u2026'}
           {status === 'done' && `${RESPONSE_TOKENS.length} tokens`}
@@ -138,7 +138,7 @@ export default function AiStreamComponent() {
           <button
             type="button"
             onClick={handleReset}
-            className="rounded-md border border-(--color-border) bg-(--color-surface) px-2.5 py-1 text-xs text-(--color-fg-muted) transition-opacity hover:opacity-70"
+            className="rounded-md border border-(--color-border) px-3 py-1 text-xs text-(--color-fg-muted) transition-colors hover:text-(--color-fg)"
           >
             Reset
           </button>
