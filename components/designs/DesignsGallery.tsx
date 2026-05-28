@@ -90,9 +90,7 @@ export function DesignsGallery({ entries }: DesignsGalleryProps) {
       ) : null}
 
       {visible.length === 0 ? (
-        <p className="font-mono text-sm text-(--color-fg-subtle)">
-          No designs match #{activeTag}.
-        </p>
+        <p className="font-mono text-sm text-(--color-fg-subtle)">No designs match #{activeTag}.</p>
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {visible.map((entry, i) => (

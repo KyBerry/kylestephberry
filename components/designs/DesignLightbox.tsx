@@ -48,10 +48,7 @@ export function DesignLightbox({
     <Dialog.Root open={isOpen} onOpenChange={(o) => !o && onClose()}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-40 bg-(--color-bg)/85 backdrop-blur-sm" />
-        <Dialog.Content
-          aria-describedby={undefined}
-          className="fixed inset-0 z-50 flex flex-col"
-        >
+        <Dialog.Content aria-describedby={undefined} className="fixed inset-0 z-50 flex flex-col">
           {open ? (
             <>
               <div className="flex shrink-0 items-center justify-end gap-2 px-4 py-3">
@@ -73,7 +70,7 @@ export function DesignLightbox({
                   aria-label="Previous design"
                   onClick={onPrev}
                   disabled={!hasPrev}
-                  className="absolute top-1/2 left-4 -translate-y-1/2 inline-flex h-10 w-10 items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface)/80 text-(--color-fg-muted) backdrop-blur transition-colors hover:border-(--color-border-strong) hover:text-(--color-fg) disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-(--color-border) disabled:hover:text-(--color-fg-muted)"
+                  className="absolute top-1/2 left-4 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface)/80 text-(--color-fg-muted) backdrop-blur transition-colors hover:border-(--color-border-strong) hover:text-(--color-fg) disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-(--color-border) disabled:hover:text-(--color-fg-muted)"
                 >
                   <ArrowLeft weight="regular" size={16} />
                 </button>
@@ -82,7 +79,7 @@ export function DesignLightbox({
                   aria-label="Next design"
                   onClick={onNext}
                   disabled={!hasNext}
-                  className="absolute top-1/2 right-4 -translate-y-1/2 inline-flex h-10 w-10 items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface)/80 text-(--color-fg-muted) backdrop-blur transition-colors hover:border-(--color-border-strong) hover:text-(--color-fg) disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-(--color-border) disabled:hover:text-(--color-fg-muted)"
+                  className="absolute top-1/2 right-4 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface)/80 text-(--color-fg-muted) backdrop-blur transition-colors hover:border-(--color-border-strong) hover:text-(--color-fg) disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-(--color-border) disabled:hover:text-(--color-fg-muted)"
                 >
                   <ArrowRight weight="regular" size={16} />
                 </button>
@@ -133,7 +130,7 @@ export function DesignLightbox({
                     {open.tags.map((tag) => (
                       <li
                         key={tag}
-                        className="rounded border border-(--color-border) px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-(--color-fg-muted)"
+                        className="rounded border border-(--color-border) px-2 py-0.5 font-mono text-[10px] tracking-[0.12em] text-(--color-fg-muted) uppercase"
                       >
                         {tag}
                       </li>
