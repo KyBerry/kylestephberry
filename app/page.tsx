@@ -25,8 +25,8 @@ export default function HomePage() {
           <p className="font-mono text-sm text-(--color-fg-subtle)">More coming soon.</p>
         ) : (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {featuredShowcases.map((entry) => (
-              <ShowcaseCard key={entry.slug} entry={withoutNotes(entry)} />
+            {featuredShowcases.map((entry, i) => (
+              <ShowcaseCard key={entry.slug} entry={withoutNotes(entry)} index={i} />
             ))}
           </div>
         )}
@@ -38,7 +38,7 @@ export default function HomePage() {
         ) : (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {featuredDesigns.map((entry, i) => (
-              <DesignTile key={entry.slug} entry={entry} priority={i < 4} />
+              <DesignTile key={entry.slug} entry={entry} priority={i < 4} index={i} />
             ))}
           </div>
         )}
@@ -49,8 +49,8 @@ export default function HomePage() {
           <p className="font-mono text-sm text-(--color-fg-subtle)">More coming soon.</p>
         ) : (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            {latestPosts.map((post) => (
-              <PostCard key={post.slug} post={post} />
+            {latestPosts.map((post, i) => (
+              <PostCard key={post.slug} post={post} index={i} />
             ))}
           </div>
         )}

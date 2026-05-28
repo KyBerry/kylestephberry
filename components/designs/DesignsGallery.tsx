@@ -94,7 +94,7 @@ export function DesignsGallery({ entries }: DesignsGalleryProps) {
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {visible.map((entry, i) => (
-            <DesignTile key={entry.slug} entry={entry} priority={i < 3} />
+            <DesignTile key={entry.slug} entry={entry} priority={i < 3} index={i} />
           ))}
         </div>
       )}
