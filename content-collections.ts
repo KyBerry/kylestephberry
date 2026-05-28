@@ -33,7 +33,11 @@ const posts = defineCollection({
   }),
   transform: async (doc, { skip, collection }) => {
     if (doc.draft) return skip('post marked draft')
-    const slug = doc._meta.filePath.replace(/\.mdx$/, '').split('/').pop() ?? doc._meta.path
+    const slug =
+      doc._meta.filePath
+        .replace(/\.mdx$/, '')
+        .split('/')
+        .pop() ?? doc._meta.path
 
     // Compute reading time from the file body
     const rawBody = await readFile(
@@ -46,9 +50,7 @@ const posts = defineCollection({
     const readingTimeText = readingTime(bodyOnly).text // e.g. "5 min read"
 
     // Static-import the compiled MDX module so Next bundles it
-    const MDXContent = createDefaultImport<ComponentType>(
-      `@/content/posts/${doc._meta.filePath}`,
-    )
+    const MDXContent = createDefaultImport<ComponentType>(`@/content/posts/${doc._meta.filePath}`)
 
     // Sibling navigation (chronological newest-first)
     const docs = await collection.documents()
@@ -66,11 +68,17 @@ const posts = defineCollection({
       readingTime: readingTimeText,
       MDXContent,
       newerSlug: newer
-        ? (newer._meta.filePath.replace(/\.mdx$/, '').split('/').pop() ?? null)
+        ? (newer._meta.filePath
+            .replace(/\.mdx$/, '')
+            .split('/')
+            .pop() ?? null)
         : null,
       newerTitle: newer?.title ?? null,
       olderSlug: older
-        ? (older._meta.filePath.replace(/\.mdx$/, '').split('/').pop() ?? null)
+        ? (older._meta.filePath
+            .replace(/\.mdx$/, '')
+            .split('/')
+            .pop() ?? null)
         : null,
       olderTitle: older?.title ?? null,
     }

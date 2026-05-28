@@ -28,7 +28,7 @@ export function Compare({
         { src: after, alt: afterAlt, label: afterLabel },
       ].map((item) => (
         <figure key={item.label}>
-          <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.12em] text-(--color-fg-subtle)">
+          <p className="mb-2 font-mono text-[10px] tracking-[0.12em] text-(--color-fg-subtle) uppercase">
             {item.label}
           </p>
           <NextImage

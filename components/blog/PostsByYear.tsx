@@ -57,23 +57,16 @@ export function PostsByYear({ posts }: PostsByYearProps) {
   return (
     <div>
       {tagCounts.length > 0 ? (
-        <TagChips
-          tags={tagCounts}
-          active={activeTag}
-          onChange={handleChange}
-          className="mb-12"
-        />
+        <TagChips tags={tagCounts} active={activeTag} onChange={handleChange} className="mb-12" />
       ) : null}
 
       {visible.length === 0 ? (
-        <p className="font-mono text-sm text-(--color-fg-subtle)">
-          No posts match #{activeTag}.
-        </p>
+        <p className="font-mono text-sm text-(--color-fg-subtle)">No posts match #{activeTag}.</p>
       ) : (
         <div className="space-y-12">
           {byYear.map(([year, group]) => (
             <section key={year}>
-              <h2 className="mb-4 font-mono text-xs uppercase tracking-[0.18em] text-(--color-fg-subtle)">
+              <h2 className="mb-4 font-mono text-xs tracking-[0.18em] text-(--color-fg-subtle) uppercase">
                 {year}
               </h2>
               <ul className="divide-y divide-(--color-border)">

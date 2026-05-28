@@ -45,13 +45,9 @@ export default async function PostPage({ params }: PageProps) {
 
   const MDXContent = post.MDXContent
   const newerLink =
-    post.newerSlug && post.newerTitle
-      ? { slug: post.newerSlug, title: post.newerTitle }
-      : null
+    post.newerSlug && post.newerTitle ? { slug: post.newerSlug, title: post.newerTitle } : null
   const olderLink =
-    post.olderSlug && post.olderTitle
-      ? { slug: post.olderSlug, title: post.olderTitle }
-      : null
+    post.olderSlug && post.olderTitle ? { slug: post.olderSlug, title: post.olderTitle } : null
 
   return (
     <>
@@ -68,10 +64,10 @@ export default async function PostPage({ params }: PageProps) {
           Writing
         </Link>
 
-        <h1 className="text-balance text-4xl font-medium tracking-[-0.025em] text-(--color-fg) md:text-5xl">
+        <h1 className="text-4xl font-medium tracking-[-0.025em] text-balance text-(--color-fg) md:text-5xl">
           {post.title}
         </h1>
-        <p className="mt-4 max-w-prose text-pretty text-lg text-(--color-fg-muted)">
+        <p className="mt-4 max-w-prose text-lg text-pretty text-(--color-fg-muted)">
           {post.summary}
         </p>
         <PostMeta
@@ -84,7 +80,7 @@ export default async function PostPage({ params }: PageProps) {
 
       {/* Body + TOC */}
       <div className="mx-auto grid w-full max-w-(--container-grid) grid-cols-1 gap-12 px-6 pb-16 md:px-8 xl:grid-cols-[minmax(0,720px)_220px]">
-        <article id={BODY_ID} className="prose-portfolio min-w-0 max-w-prose">
+        <article id={BODY_ID} className="prose-portfolio max-w-prose min-w-0">
           <MDXContent />
         </article>
         <aside className="hidden xl:block">
@@ -96,7 +92,12 @@ export default async function PostPage({ params }: PageProps) {
 
       {/* Prev / next strip */}
       {(newerLink || olderLink) && (
-        <Container variant="grid" as="nav" aria-label="Post navigation" className="border-t border-(--color-border) py-10">
+        <Container
+          variant="grid"
+          as="nav"
+          aria-label="Post navigation"
+          className="border-t border-(--color-border) py-10"
+        >
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-between">
             {olderLink ? (
               <Link

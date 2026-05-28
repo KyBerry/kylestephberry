@@ -54,7 +54,7 @@ export function TableOfContents({ targetSelector, className }: TableOfContentsPr
 
   return (
     <nav aria-label="Table of contents" className={cn('text-sm', className)}>
-      <p className="mb-3 font-mono text-xs uppercase tracking-[0.18em] text-(--color-fg-subtle)">
+      <p className="mb-3 font-mono text-xs tracking-[0.18em] text-(--color-fg-subtle) uppercase">
         Contents
       </p>
       <ol className="space-y-2">

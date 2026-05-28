@@ -33,7 +33,7 @@ export function PostMeta({ publishedAt, readingTime, tags, className }: PostMeta
             {tags.map((tag) => (
               <li
                 key={tag}
-                className="rounded border border-(--color-border) px-1.5 py-0.5 text-[10px] uppercase tracking-[0.12em] text-(--color-fg-muted)"
+                className="rounded border border-(--color-border) px-1.5 py-0.5 text-[10px] tracking-[0.12em] text-(--color-fg-muted) uppercase"
               >
                 {tag}
               </li>
