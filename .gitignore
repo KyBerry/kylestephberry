@@ -58,6 +58,7 @@ public/_pagefind/
 # MCP tooling artefacts
 .playwright-mcp/
 
-# Internal working docs — kept out of the public repo
-/docs/superpowers/
-/docs/resume-portfolio-alignment-*.md
+# Agent planning docs & internal working notes — local-only, never committed.
+# The superpowers agent framework writes plans/specs under docs/; keeping the
+# whole directory ignored guarantees none of it can enter git history.
+/docs/

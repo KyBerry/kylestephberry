@@ -11,7 +11,6 @@ export const site = {
     { label: 'X', href: 'https://x.com/kylestephberry' },
     { label: 'GitHub', href: 'https://github.com/KyBerry' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/kyleberryofficial' },
-    { label: 'Figma', href: 'https://www.figma.com/@kylestephberry' },
   ],
   nav: [
     { label: 'Components', href: '/components' },
