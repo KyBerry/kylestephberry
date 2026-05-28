@@ -25,8 +25,8 @@ export default function ComponentsIndexPage() {
           Interactive components
         </h1>
         <p className="mt-4 max-w-prose text-(--color-fg-muted)">
-          Small UI pieces — buttons, inputs, motion experiments. Each card runs the actual
-          component; click through to see the source.
+          Real interface surfaces — data tables, dashboards, AI streams, command palettes, and
+          i18n playgrounds. Each card runs the actual component; click through to see the source.
         </p>
       </header>
 

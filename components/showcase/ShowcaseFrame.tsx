@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import type { Showcase } from 'content-collections'
 import { cn } from '@/lib/utils/cn'
 import { FullscreenStage } from './FullscreenStage'
+import { ScaledStage } from './ScaledStage'
 import { SourcePane } from './SourcePane'
 import { VariantChips } from './VariantChips'
 
@@ -67,19 +68,27 @@ export function ShowcaseFrame({ entry, className }: ShowcaseFrameProps) {
         </div>
       </div>
 
-      {/* Body: stacked on mobile, side-by-side on lg+ */}
-      <div className="flex flex-col lg:flex-row lg:divide-x lg:divide-(--color-border)">
-        <div className="grid aspect-[16/10] place-items-center border-b border-(--color-border) bg-(--color-bg) lg:w-3/5 lg:border-b-0">
-          <ActiveComponent />
+      {/* Body: preview on top, code below — always stacked */}
+      <div className="flex flex-col divide-y divide-(--color-border)">
+        {/*
+          Scale-to-fit so the whole component fits the preview box. Interactive
+          (unlike the index card): this is the detail page, so the live preview
+          should respond to clicks/hover. The fullscreen escape hatch above still
+          shows it at true 1:1 with scroll.
+        */}
+        <div className="aspect-[16/10] bg-(--color-bg)">
+          <ScaledStage interactive>
+            <ActiveComponent />
+          </ScaledStage>
         </div>
-        <div className="lg:h-auto lg:w-2/5">
+        <div className={expanded ? 'h-[480px]' : ''}>
           <SourcePane
             filename={activeFilename}
             sourceText={activeSourceText}
             sourceHast={activeSourceHast}
             expanded={expanded}
             onToggle={() => setExpanded((v) => !v)}
-            className="lg:h-full"
+            className="h-full"
           />
         </div>
       </div>

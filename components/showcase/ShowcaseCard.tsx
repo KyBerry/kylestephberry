@@ -5,6 +5,7 @@ import Link from 'next/link'
 import type { Showcase } from 'content-collections'
 import { cn } from '@/lib/utils/cn'
 import { FadeIn } from '@/components/motion/FadeIn'
+import { ScaledStage } from '@/components/showcase/ScaledStage'
 import { useCursorGlow } from '@/lib/motion/useCursorGlow'
 
 // Card consumes only a small slice of the entry — narrowing the prop type
@@ -62,9 +63,18 @@ export function ShowcaseCard({ entry, index = 0, className }: ShowcaseCardProps)
       >
         <div
           ref={ref}
-          className="relative grid aspect-[16/10] place-items-center overflow-hidden rounded-t-(--radius-card) border-b border-(--color-border) bg-(--color-bg)"
+          className="relative aspect-[16/10] overflow-hidden rounded-t-(--radius-card) border-b border-(--color-border) bg-(--color-bg)"
         >
-          {mounted ? <Component /> : null}
+          {/*
+            Scale-to-fit so the WHOLE component is visible (live components run
+            512–768px wide; the card box is ≈389px). Non-interactive: the entire
+            card is a <Link>, so the preview must not capture pointer events.
+          */}
+          {mounted ? (
+            <ScaledStage interactive={false}>
+              <Component />
+            </ScaledStage>
+          ) : null}
         </div>
         <div className="relative flex items-baseline justify-between gap-4 px-4 py-3">
           <span className="text-sm font-medium text-(--color-fg) transition-colors group-hover:text-(--color-accent)">
