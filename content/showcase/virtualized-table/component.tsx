@@ -31,7 +31,7 @@ const ROW_HEIGHT = 48
 const VIEWPORT_HEIGHT = 304
 const OVERSCAN = 5
 const GRID_COLUMNS =
-  'minmax(150px, 1.35fr) minmax(90px, 0.8fr) minmax(86px, 0.7fr) minmax(72px, 0.55fr) minmax(88px, 0.7fr) minmax(96px, 0.75fr)'
+  'minmax(146px, 1.2fr) minmax(132px, 0.95fr) minmax(84px, 0.6fr) minmax(56px, 0.45fr) minmax(92px, 0.65fr) minmax(96px, 0.7fr)'
 
 const COLUMNS = [
   { key: 'account', label: 'Account', align: 'left' },
@@ -85,12 +85,16 @@ function buildRows(): TableRow[] {
     const id = `acct-${String(index + 1).padStart(3, '0')}`
     const day = String(((index * 7) % 28) + 1).padStart(2, '0')
     const month = String(((index * 5) % 12) + 1).padStart(2, '0')
-    const mrr = 1200 + ((index * 379) % 18200)
+    // Spread MRR across a wide range (a prime-ish stride avoids the clustered,
+    // near-identical values that read as fake/generated data).
+    const mrr = 2400 + ((index * 1373) % 96000)
     const users = 8 + ((index * 11) % 144)
 
     return {
       id,
-      account: `${pick(ACCOUNT_PREFIXES, index)} ${pick(ACCOUNT_SUFFIXES, index * 3)}`,
+      // Offset the suffix per prefix cycle so the same prefix doesn't keep
+      // pairing with the same suffix (no "Cedar Works" three rows running).
+      account: `${pick(ACCOUNT_PREFIXES, index)} ${pick(ACCOUNT_SUFFIXES, index * 3 + Math.floor(index / 8))}`,
       plan: index % 4 === 0 ? 'Enterprise' : index % 3 === 0 ? 'Scale' : 'Team',
       region: pick(REGIONS, index * 2),
       mrr,
@@ -182,14 +186,18 @@ function ColumnHeader({
       <button
         type="button"
         onClick={() => onSort(column.key)}
-        className={`flex w-full items-center gap-1.5 px-3 py-2.5 font-mono text-[10px] tracking-[0.12em] text-(--color-fg-subtle) uppercase transition-colors hover:text-(--color-fg) ${
+        className={`group flex w-full items-center gap-1.5 px-3 py-2.5 font-mono text-[10px] tracking-[0.12em] text-(--color-fg-subtle) uppercase transition-colors hover:text-(--color-fg) ${
           isRight ? 'flex-row-reverse' : ''
         }`}
       >
         <span>{column.label}</span>
         <span
           aria-hidden="true"
-          className={isSorted ? 'text-(--color-accent)' : 'text-(--color-fg-subtle)/60'}
+          className={
+            isSorted
+              ? 'text-(--color-accent)'
+              : 'text-(--color-fg-subtle) opacity-0 transition-opacity group-hover:opacity-100'
+          }
         >
           {glyph}
         </span>
