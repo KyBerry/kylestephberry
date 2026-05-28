@@ -128,7 +128,7 @@ function SparklineCard({ metric, index, active }: { metric: Metric; index: numbe
   const trendGlyph = metric.positive ? '▲' : '▼'
 
   return (
-    <div className="flex flex-col gap-3 rounded-md border border-(--color-border) bg-(--color-surface) p-4">
+    <div className="flex flex-col gap-3 rounded-(--radius-card) border border-(--color-border) bg-(--color-surface) p-4">
       <div className="flex items-start justify-between gap-2">
         <span className="text-xs font-medium text-(--color-fg-muted) uppercase tracking-wide leading-none">
           {metric.label}
