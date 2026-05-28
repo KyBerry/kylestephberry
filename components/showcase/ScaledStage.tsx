@@ -34,6 +34,13 @@ interface ScaledStageProps {
  * change the element's layout box, so `offsetWidth/offsetHeight` keep reporting
  * the *natural* (unscaled) size even while a scale is applied. We measure that,
  * compare to the available stage box, and pick the fitting ratio.
+ *
+ * Critical detail — the content wrapper is `w-max` (max-content), NOT `w-fit`
+ * (fit-content). In a centered stage, fit-content collapses to the *stage*
+ * width, so a `w-full max-w-3xl` component would lay out cramped at the card
+ * width (squished columns, overflow) and measure wrong. max-content lays the
+ * component out at its true natural width regardless of stage size, so the
+ * fit ratio is correct.
  */
 export function ScaledStage({
   children,
@@ -77,7 +84,7 @@ export function ScaledStage({
     >
       <div
         ref={contentRef}
-        className={cn('w-fit', !interactive && 'preview-static pointer-events-none')}
+        className={cn('w-max', !interactive && 'preview-static pointer-events-none')}
         style={{
           transform: `scale(${scale})`,
           transformOrigin: 'center center',

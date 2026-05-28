@@ -131,7 +131,7 @@ export default function AiMessagePanel() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-2xl overflow-hidden rounded-(--radius-card) border border-(--color-border) bg-(--color-surface) text-sm">
+    <div className="mx-auto w-full max-w-md overflow-hidden rounded-(--radius-card) border border-(--color-border) bg-(--color-surface) text-sm">
       <style>{`
         @keyframes ai-cursor-blink {
           0%, 100% { opacity: 1; }
@@ -144,24 +144,22 @@ export default function AiMessagePanel() {
       `}</style>
 
       <div className="flex items-center justify-between gap-3 border-b border-(--color-border) px-4 py-3">
-        <div>
-          <p className="font-mono text-[10px] tracking-[0.18em] text-(--color-fg-subtle) uppercase">
-            Review assistant
-          </p>
-          <p className="mt-1 text-xs text-(--color-fg-muted)">
-            Streaming response with expandable sources
-          </p>
-        </div>
-        <span
-          aria-hidden="true"
-          className="size-2 shrink-0 rounded-full bg-(--color-accent)"
-          style={{ opacity: status === 'streaming' ? 1 : 0.4 }}
-        />
+        <p className="font-mono text-[10px] tracking-[0.18em] text-(--color-fg-subtle) uppercase">
+          Review assistant
+        </p>
+        <span className="flex items-center gap-2 font-mono text-[10px] text-(--color-fg-subtle)">
+          {status === 'streaming' ? 'Generating' : status === 'done' ? 'Complete' : 'Stopped'}
+          <span
+            aria-hidden="true"
+            className="size-1.5 rounded-full bg-(--color-accent)"
+            style={{ opacity: status === 'streaming' ? 1 : 0.4 }}
+          />
+        </span>
       </div>
 
       <div
         ref={scrollRef}
-        className="scrollbar-thin max-h-[390px] space-y-4 overflow-y-auto bg-(--color-bg) p-4"
+        className="scrollbar-thin max-h-[300px] space-y-4 overflow-y-auto bg-(--color-bg) p-4"
       >
         <section
           aria-label="User message"

@@ -78,8 +78,17 @@ export function ShowcaseFrame({ entry, className }: ShowcaseFrameProps) {
           only; the fullscreen stage is the full-bleed escape hatch.)
         */}
         <div className="scrollbar-thin h-[440px] overflow-auto bg-(--color-bg)">
-          <div className="flex min-h-full items-center justify-center p-6">
-            <ActiveComponent />
+          {/*
+            Flex + `m-auto` centers the component when it's smaller than the box
+            and, crucially, does NOT trap scroll when it's taller: auto margins
+            collapse to 0 on overflow (unlike `items-center`/`justify-center`,
+            which can push the top out of reach). The component's own internal
+            scroll regions (e.g. the table viewport) keep working at 1:1.
+          */}
+          <div className="flex min-h-full p-6">
+            <div className="m-auto">
+              <ActiveComponent />
+            </div>
           </div>
         </div>
         <div className={expanded ? 'h-[480px]' : ''}>

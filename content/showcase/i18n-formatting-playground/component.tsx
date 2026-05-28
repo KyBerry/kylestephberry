@@ -110,9 +110,9 @@ const RELATIVE_DAYS = 3
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-(--radius-card) border border-(--color-border) bg-(--color-bg) p-4">
-      <p className="text-xs text-(--color-fg-muted)">{label}</p>
-      <p className="mt-2 text-2xl font-semibold text-(--color-fg) tabular-nums">{value}</p>
+    <div className="min-w-0 rounded-(--radius-card) border border-(--color-border) bg-(--color-bg) p-4">
+      <p className="truncate text-xs text-(--color-fg-muted)">{label}</p>
+      <p className="mt-2 truncate text-lg font-semibold text-(--color-fg) tabular-nums">{value}</p>
     </div>
   )
 }
@@ -174,84 +174,84 @@ export default function I18nFormattingPlayground() {
   const preview = useMemo(() => formatPreview(locale, reviewerCount), [locale, reviewerCount])
 
   return (
-    <div className="mx-auto grid w-full max-w-3xl gap-4 text-sm md:grid-cols-[220px_1fr]">
-      <div className="flex flex-col gap-3 rounded-(--radius-card) border border-(--color-border) bg-(--color-surface) p-4">
-        <label
-          htmlFor="locale-select"
-          className="font-mono text-[10px] tracking-[0.18em] text-(--color-fg-subtle) uppercase"
-        >
-          Locale
-        </label>
-        <select
-          id="locale-select"
-          value={localeCode}
-          onChange={(event) => setLocaleCode(event.target.value as LocaleKey)}
-          className="rounded-md border border-(--color-border) bg-(--color-bg) px-3 py-2 text-sm text-(--color-fg) outline-none focus:border-(--color-accent)"
-        >
-          {LOCALE_OPTIONS.map((option) => (
-            <option key={option.code} value={option.code}>
-              {option.nativeLabel} · {option.code}
-            </option>
-          ))}
-        </select>
+    <div className="mx-auto flex w-full max-w-md flex-col gap-4 text-sm">
+      {/* Controls: locale select + reviewer stepper, one compact row */}
+      <div className="flex items-end gap-3 rounded-(--radius-card) border border-(--color-border) bg-(--color-surface) p-3">
+        <div className="min-w-0 flex-1">
+          <label
+            htmlFor="locale-select"
+            className="mb-1.5 block font-mono text-[10px] tracking-[0.18em] text-(--color-fg-subtle) uppercase"
+          >
+            Locale
+          </label>
+          <select
+            id="locale-select"
+            value={localeCode}
+            onChange={(event) => setLocaleCode(event.target.value as LocaleKey)}
+            className="w-full rounded-md border border-(--color-border) bg-(--color-bg) px-3 py-2 text-sm text-(--color-fg) outline-none focus:border-(--color-accent)"
+          >
+            {LOCALE_OPTIONS.map((option) => (
+              <option key={option.code} value={option.code}>
+                {option.nativeLabel} · {option.code}
+              </option>
+            ))}
+          </select>
+        </div>
 
-        <div className="rounded-md border border-(--color-border) bg-(--color-bg) p-3">
-          <p className="font-mono text-[10px] text-(--color-fg-subtle)">Reviewer count</p>
-          <div className="mt-2 flex items-center justify-between gap-2">
+        <div>
+          <p className="mb-1.5 font-mono text-[10px] tracking-[0.18em] text-(--color-fg-subtle) uppercase">
+            Reviewers
+          </p>
+          <div className="flex items-center gap-1">
             <button
               type="button"
               onClick={() => setReviewerCount((count) => Math.max(0, count - 1))}
-              className="h-8 w-8 rounded-md border border-(--color-border) text-(--color-fg-muted) transition-colors hover:text-(--color-fg)"
+              className="size-8 rounded-md border border-(--color-border) text-(--color-fg-muted) transition-colors hover:text-(--color-fg)"
               aria-label="Decrease reviewer count"
             >
-              -
+              −
             </button>
-            <span className="font-mono text-lg text-(--color-fg) tabular-nums">
+            <span className="w-6 text-center font-mono text-(--color-fg) tabular-nums">
               {reviewerCount}
             </span>
             <button
               type="button"
               onClick={() => setReviewerCount((count) => Math.min(12, count + 1))}
-              className="h-8 w-8 rounded-md border border-(--color-border) text-(--color-fg-muted) transition-colors hover:text-(--color-fg)"
+              className="size-8 rounded-md border border-(--color-border) text-(--color-fg-muted) transition-colors hover:text-(--color-fg)"
               aria-label="Increase reviewer count"
             >
               +
             </button>
           </div>
         </div>
-
-        <div className="rounded-md border border-(--color-border) bg-(--color-bg) p-3 font-mono text-[10px] text-(--color-fg-subtle)">
-          Direction: <span className="text-(--color-accent)">{locale.direction.toUpperCase()}</span>
-          <br />
-          Plural category: <span className="text-(--color-accent)">{preview.pluralCategory}</span>
-        </div>
       </div>
 
+      {/* Live formatted preview — re-renders in the selected locale + direction */}
       <div
         dir={locale.direction}
         aria-live="polite"
         className="rounded-(--radius-card) border border-(--color-border) bg-(--color-surface) p-5"
       >
         <div className="flex items-start justify-between gap-4">
-          <div>
+          <div className="min-w-0">
             <p className="font-mono text-[10px] tracking-[0.18em] text-(--color-fg-subtle) uppercase">
               {preview.copy.eyebrow}
             </p>
-            <h3 className="mt-2 text-2xl font-medium tracking-[-0.02em] text-(--color-fg)">
+            <h3 className="mt-2 text-xl font-medium tracking-[-0.02em] text-(--color-fg)">
               {preview.copy.title}
             </h3>
           </div>
-          <span className="rounded-full border border-(--color-border) px-3 py-1 font-mono text-[10px] text-(--color-fg-subtle)">
+          <span className="shrink-0 rounded-full border border-(--color-border) px-3 py-1 font-mono text-[10px] text-(--color-fg-subtle)">
             {locale.label}
           </span>
         </div>
 
-        <div className="mt-6 grid gap-3 sm:grid-cols-2">
+        <div className="mt-5 grid grid-cols-2 gap-3">
           <Stat label={preview.copy.invoice} value={preview.amount} />
           <Stat label={preview.copy.activeUsers} value={preview.compactUsers} />
         </div>
 
-        <dl className="mt-4 grid gap-3 rounded-(--radius-card) border border-(--color-border) bg-(--color-bg) p-4 text-sm">
+        <dl className="mt-3 grid gap-2.5 rounded-(--radius-card) border border-(--color-border) bg-(--color-bg) p-4">
           <DetailRow term={preview.copy.due}>{preview.date}</DetailRow>
           <DetailRow term="Relative">{preview.relativeDue}</DetailRow>
           <DetailRow term="Plural">
@@ -259,6 +259,11 @@ export default function I18nFormattingPlayground() {
           </DetailRow>
           <DetailRow term="List">{preview.collaboratorList}</DetailRow>
         </dl>
+
+        <p className="mt-4 font-mono text-[10px] text-(--color-fg-subtle)">
+          {locale.direction.toUpperCase()} · plural{' '}
+          <span className="text-(--color-accent)">{preview.pluralCategory}</span>
+        </p>
       </div>
     </div>
   )
