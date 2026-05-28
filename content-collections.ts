@@ -181,7 +181,42 @@ const showcase = defineCollection({
 
 /* ---------------------------------------------------------------- *
  * Designs
+ *
+ * blurDataURLs are derived ahead of the build by
+ * `scripts/derive-design-blurhashes.ts` (wired as `prebuild`), which writes
+ * an mtime-keyed cache to `content/.cache/design-blur.json`. The transform
+ * below reads that cache when an entry exists, and falls back to computing
+ * the blur inline with sharp when it doesn't — so `pnpm dev` works without
+ * a prebuild step.
  * ---------------------------------------------------------------- */
+
+const DESIGN_BLUR_CACHE_FILE = path.resolve(process.cwd(), 'content/.cache/design-blur.json')
+
+type DesignBlurCacheEntry = { mtime: number; blurDataURL: string }
+type DesignBlurCache = Record<string, DesignBlurCacheEntry>
+
+// Load the prebuilt blur cache once per process. Missing/malformed → empty.
+let designBlurCachePromise: Promise<DesignBlurCache> | null = null
+function loadDesignBlurCache(): Promise<DesignBlurCache> {
+  if (!designBlurCachePromise) {
+    designBlurCachePromise = readFile(DESIGN_BLUR_CACHE_FILE, 'utf-8')
+      .then((raw) => {
+        const parsed = JSON.parse(raw) as unknown
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+          return parsed as DesignBlurCache
+        }
+        return {}
+      })
+      .catch(() => ({}) as DesignBlurCache)
+  }
+  return designBlurCachePromise
+}
+
+async function computeDesignBlur(image: string): Promise<string> {
+  const absPath = path.resolve(process.cwd(), 'public', image.replace(/^\//, ''))
+  const buffer = await sharp(absPath).resize(16).blur(4).png().toBuffer()
+  return `data:image/png;base64,${buffer.toString('base64')}`
+}
 
 const designs = defineCollection({
   name: 'designs',
@@ -207,11 +242,14 @@ const designs = defineCollection({
         .split('/')
         .pop() ?? doc._meta.path
 
-    const blurDataURL = await cache(`blur:${doc.image}`, async () => {
-      const absPath = path.resolve(process.cwd(), 'public', doc.image.replace(/^\//, ''))
-      const buffer = await sharp(absPath).resize(16).blur(4).png().toBuffer()
-      return `data:image/png;base64,${buffer.toString('base64')}`
-    })
+    // Prefer the prebuilt cache (populated by scripts/derive-design-blurhashes.ts).
+    const blurCache = await loadDesignBlurCache()
+    const cached = blurCache[doc.image]
+    const blurDataURL =
+      cached?.blurDataURL ??
+      // Fallback: compute inline (e.g. `pnpm dev` without a prebuild).
+      // content-collections' own cache keeps this from re-running unchanged.
+      (await cache(`blur:${doc.image}`, () => computeDesignBlur(doc.image)))
 
     return {
       ...doc,
