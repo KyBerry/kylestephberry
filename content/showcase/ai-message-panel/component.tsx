@@ -143,48 +143,26 @@ export default function AiMessagePanel() {
         }
       `}</style>
 
-      <div className="flex items-center justify-between gap-3 border-b border-(--color-border) px-4 py-3">
-        <p className="font-mono text-[10px] tracking-[0.18em] text-(--color-fg-subtle) uppercase">
-          Review assistant
-        </p>
-        <span className="flex items-center gap-2 font-mono text-[10px] text-(--color-fg-subtle)">
+      <div className="flex items-baseline justify-between gap-3 border-b border-(--color-border) px-5 py-4">
+        <p className="text-(--color-fg)">Launch readiness</p>
+        <span className="font-mono text-[10px] tracking-[0.14em] text-(--color-fg-subtle) uppercase">
           {status === 'streaming' ? 'Generating' : status === 'done' ? 'Complete' : 'Stopped'}
-          <span
-            aria-hidden="true"
-            className="size-1.5 rounded-full bg-(--color-accent)"
-            style={{ opacity: status === 'streaming' ? 1 : 0.4 }}
-          />
         </span>
       </div>
 
       <div
         ref={scrollRef}
-        className="scrollbar-thin max-h-[300px] space-y-4 overflow-y-auto bg-(--color-bg) p-4"
+        className="scrollbar-thin max-h-[320px] space-y-5 overflow-y-auto bg-(--color-bg) px-5 py-6"
       >
         <section
           aria-label="User message"
-          className="ml-auto max-w-[86%] rounded-(--radius-card) rounded-tr-md border border-(--color-border) bg-(--color-surface) px-4 py-3 text-(--color-fg)"
+          className="ml-auto max-w-[82%] rounded-(--radius-card) rounded-tr-md border border-(--color-border-strong) bg-(--color-surface-hover) px-4 py-3 leading-relaxed text-(--color-fg)"
         >
-          <p className="font-mono text-[10px] tracking-[0.14em] text-(--color-fg-subtle) uppercase">
-            You
-          </p>
-          <p className="mt-1">{USER_PROMPT}</p>
+          {USER_PROMPT}
         </section>
 
-        <section
-          aria-label="Assistant message"
-          className="max-w-[92%] rounded-(--radius-card) rounded-tl-md border border-(--color-border) bg-(--color-surface) px-4 py-3 text-(--color-fg-muted)"
-        >
-          <div className="flex items-center justify-between gap-3">
-            <p className="font-mono text-[10px] tracking-[0.14em] text-(--color-fg-subtle) uppercase">
-              Assistant
-            </p>
-            <span className="font-mono text-[10px] text-(--color-fg-subtle)">
-              {status === 'streaming' ? 'Generating' : status === 'done' ? 'Complete' : 'Stopped'}
-            </span>
-          </div>
-
-          <p aria-live="polite" className="mt-3 min-h-24 leading-relaxed text-(--color-fg)">
+        <section aria-label="Assistant message" className="max-w-[94%]">
+          <p aria-live="polite" className="min-h-24 leading-relaxed text-(--color-fg)">
             {displayed}
             {status === 'streaming' ? (
               <span
@@ -195,7 +173,7 @@ export default function AiMessagePanel() {
             ) : null}
           </p>
 
-          <div className="mt-4 flex flex-wrap gap-2" aria-label="Citations">
+          <div className="mt-5 flex flex-wrap gap-2" aria-label="Citations">
             {CITATIONS.map((citation) => {
               const expanded = expandedCitationId === citation.id
               return (
@@ -204,7 +182,8 @@ export default function AiMessagePanel() {
                   type="button"
                   onClick={() => setExpandedCitationId(expanded ? null : citation.id)}
                   aria-expanded={expanded}
-                  className="rounded-full border border-(--color-border) bg-(--color-bg) px-3 py-1 font-mono text-[10px] text-(--color-fg-muted) transition-colors hover:border-(--color-accent) hover:text-(--color-fg)"
+                  className="rounded-md border px-2.5 py-1 font-mono text-[10px] transition-colors data-[on=true]:border-(--color-border-strong) data-[on=true]:bg-(--color-surface) data-[on=true]:text-(--color-fg) data-[on=false]:border-(--color-border) data-[on=false]:text-(--color-fg-subtle) data-[on=false]:hover:text-(--color-fg-muted)"
+                  data-on={expanded}
                 >
                   [{citation.marker}] {citation.title}
                 </button>
@@ -213,24 +192,24 @@ export default function AiMessagePanel() {
           </div>
 
           {expandedCitation ? (
-            <aside className="mt-3 rounded-(--radius-card) border border-(--color-border) bg-(--color-bg) p-3">
-              <p className="font-mono text-[10px] tracking-[0.14em] text-(--color-accent) uppercase">
-                {expandedCitation.source}
-              </p>
-              <p className="mt-2 text-xs leading-relaxed text-(--color-fg-muted)">
+            <aside className="mt-3 rounded-(--radius-card) border border-(--color-border) bg-(--color-surface) px-4 py-3">
+              <p className="text-xs leading-relaxed text-(--color-fg-muted)">
                 {expandedCitation.quote}
+              </p>
+              <p className="mt-2.5 font-mono text-[10px] tracking-[0.12em] text-(--color-fg-subtle) uppercase">
+                {expandedCitation.source}
               </p>
             </aside>
           ) : null}
         </section>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-(--color-border) px-4 py-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-(--color-border) px-5 py-4">
         <span className="font-mono text-[10px] text-(--color-fg-subtle)" aria-live="polite">
           {status === 'streaming'
-            ? `${tokenIndex}/${RESPONSE_TOKENS.length} tokens`
+            ? `${tokenIndex} / ${RESPONSE_TOKENS.length} tokens`
             : status === 'done'
-              ? `${RESPONSE_TOKENS.length} tokens with ${CITATIONS.length} citations`
+              ? `${RESPONSE_TOKENS.length} tokens · ${CITATIONS.length} sources`
               : `Stopped at ${tokenIndex} tokens`}
         </span>
         <div className="flex gap-2">
@@ -246,7 +225,7 @@ export default function AiMessagePanel() {
           <button
             type="button"
             onClick={regenerate}
-            className="rounded-md border border-(--color-border-strong) bg-(--color-bg) px-3 py-1.5 text-xs text-(--color-fg) transition-colors hover:border-(--color-accent)"
+            className="rounded-md border border-(--color-border-strong) bg-(--color-surface-hover) px-3 py-1.5 text-xs text-(--color-fg) transition-colors hover:border-(--color-accent)"
           >
             Regenerate
           </button>
