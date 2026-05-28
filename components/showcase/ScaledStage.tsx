@@ -5,68 +5,63 @@ import { cn } from '@/lib/utils/cn'
 
 interface ScaledStageProps {
   children: ReactNode
-  /** Never enlarge past this; default 1 (shrink-only — upscaling blurs small UI). */
-  maxScale?: number
-  /** px gap between scaled content and stage edges; default 24. */
-  inset?: number
   /**
-   * Floor for the content's natural layout width, in px. Components with no
-   * `max-w-*` and no intrinsic width (e.g. metric-dashboard's bare
-   * `grid grid-cols-2`) would otherwise shrink-wrap to a cramped column under
-   * `w-fit`; pinning a sensible base width lets them lay out properly, then the
-   * whole thing scales down to fit. Default 0 (off) so components that already
-   * size themselves are untouched.
+   * Cap on the fit scale. Allows MODEST upscaling (default 1.25) so a small
+   * component (a button) isn't a lost dot in a big card, without blowing it up.
    */
-  minWidth?: number
+  maxScale?: number
+  /** px padding between content and stage edges; default 20. */
+  inset?: number
   /** false → pointer-events-none (visual-only); default true. */
   interactive?: boolean
   className?: string
 }
 
 /**
- * Scale-to-fit preview wrapper. Renders `children` at their natural size, then
- * applies a CSS `transform: scale()` so the whole component fits the stage,
- * centered — large components (e.g. a 768px `max-w-3xl` table) shrink to be
- * fully visible instead of being center-cropped, while small ones (a button)
- * stay at 1:1.
+ * Preview stage for the component grid cards.
  *
- * Why this works: `transform: scale()` is a paint-time effect — it does NOT
- * change the element's layout box, so `offsetWidth/offsetHeight` keep reporting
- * the *natural* (unscaled) size even while a scale is applied. We measure that,
- * compare to the available stage box, and pick the fitting ratio.
+ * Strategy (chosen after seeing real renders): fit to WIDTH for legibility,
+ * not to the whole box. Scaling tall components down to fully fit makes them
+ * illegibly tiny and gives every card a different visual weight. Instead:
  *
- * Critical detail — the content wrapper is `w-max` (max-content), NOT `w-fit`
- * (fit-content). In a centered stage, fit-content collapses to the *stage*
- * width, so a `w-full max-w-3xl` component would lay out cramped at the card
- * width (squished columns, overflow) and measure wrong. max-content lays the
- * component out at its true natural width regardless of stage size, so the
- * fit ratio is correct.
+ *   - scale = min(availWidth / naturalWidth, maxScale) — the component fills
+ *     the card width at a readable size; small components upscale modestly.
+ *   - if the scaled height fits, center it.
+ *   - if it's taller than the card, top-align and fade the cropped bottom edge
+ *     so it reads as an intentional "peek" (header/first content visible), the
+ *     way polished component galleries preview large surfaces. The full,
+ *     interactive component lives on the detail page.
+ *
+ * `transform: scale()` is paint-only, so `offsetWidth/Height` keep reporting
+ * the natural (unscaled) size for measurement. The content wrapper is `w-max`
+ * (max-content) so `w-full`/`max-w-*` components lay out at their true width
+ * instead of collapsing to the stage width.
  */
 export function ScaledStage({
   children,
-  maxScale = 1,
-  inset = 24,
-  minWidth = 0,
+  maxScale = 1.25,
+  inset = 20,
   interactive = true,
   className,
 }: ScaledStageProps) {
   const stageRef = useRef<HTMLDivElement | null>(null)
   const contentRef = useRef<HTMLDivElement | null>(null)
   const [scale, setScale] = useState(1)
+  const [overflowing, setOverflowing] = useState(false)
 
   const measure = useCallback(() => {
     const stage = stageRef.current
     const content = contentRef.current
     if (!stage || !content) return
-    // offsetWidth/Height are LAYOUT dims — unaffected by the transform, so they
-    // give the natural (unscaled) size even while a scale is applied.
-    const nW = content.offsetWidth
-    const nH = content.offsetHeight
-    if (!nW || !nH) return
+    const naturalW = content.offsetWidth
+    const naturalH = content.offsetHeight
+    if (!naturalW || !naturalH) return
     const availW = stage.clientWidth - inset * 2
     const availH = stage.clientHeight - inset * 2
-    const next = Math.min(availW / nW, availH / nH, maxScale)
-    setScale(next > 0 ? next : 1)
+    const next = Math.min(availW / naturalW, maxScale)
+    const resolved = next > 0 ? next : 1
+    setScale(resolved)
+    setOverflowing(naturalH * resolved > availH)
   }, [inset, maxScale])
 
   useEffect(() => {
@@ -77,18 +72,28 @@ export function ScaledStage({
     return () => ro.disconnect()
   }, [measure])
 
+  const fadeMask = 'linear-gradient(to bottom, #000 72%, transparent)'
+
   return (
     <div
       ref={stageRef}
-      className={cn('relative grid h-full w-full place-items-center overflow-hidden', className)}
+      className={cn(
+        'relative flex h-full w-full justify-center overflow-hidden',
+        overflowing ? 'items-start' : 'items-center',
+        className,
+      )}
+      style={{
+        padding: inset,
+        maskImage: overflowing ? fadeMask : undefined,
+        WebkitMaskImage: overflowing ? fadeMask : undefined,
+      }}
     >
       <div
         ref={contentRef}
-        className={cn('w-max', !interactive && 'preview-static pointer-events-none')}
+        className={cn('w-max shrink-0', !interactive && 'preview-static pointer-events-none')}
         style={{
           transform: `scale(${scale})`,
-          transformOrigin: 'center center',
-          minWidth: minWidth || undefined,
+          transformOrigin: overflowing ? 'top center' : 'center center',
         }}
       >
         {children}
