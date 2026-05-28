@@ -31,20 +31,48 @@ const posts = defineCollection({
     heroImage: z.string().nullable().default(null),
     heroAlt: z.string().nullable().default(null),
   }),
-  transform: (doc, { skip }) => {
+  transform: async (doc, { skip, collection }) => {
     if (doc.draft) return skip('post marked draft')
-    const slug =
-      doc._meta.filePath
-        .replace(/\.mdx$/, '')
-        .split('/')
-        .pop() ?? doc._meta.path
-    // NOTE: MDX body rendering is deferred to Plan 6 (blog). That plan adds
-    // @next/mdx + a createDefaultImport<ComponentType> for the .mdx file here.
-    // Plan 2 only exposes metadata; the body string is not part of allPosts.
+    const slug = doc._meta.filePath.replace(/\.mdx$/, '').split('/').pop() ?? doc._meta.path
+
+    // Compute reading time from the file body
+    const rawBody = await readFile(
+      path.resolve(process.cwd(), 'content/posts', doc._meta.filePath),
+      'utf-8',
+    )
+    // Strip frontmatter for the word count
+    const bodyOnly = rawBody.replace(/^---[\s\S]*?\n---\n/, '')
+    const { default: readingTime } = await import('reading-time')
+    const readingTimeText = readingTime(bodyOnly).text // e.g. "5 min read"
+
+    // Static-import the compiled MDX module so Next bundles it
+    const MDXContent = createDefaultImport<ComponentType>(
+      `@/content/posts/${doc._meta.filePath}`,
+    )
+
+    // Sibling navigation (chronological newest-first)
+    const docs = await collection.documents()
+    const sorted = [...docs]
+      .filter((d) => !d.draft)
+      .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
+    const idx = sorted.findIndex((d) => d._meta.filePath === doc._meta.filePath)
+    const newer = idx > 0 ? sorted[idx - 1] : null // newer = previous index (smaller idx)
+    const older = idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : null
+
     return {
       ...doc,
       slug,
       url: `/blog/${slug}`,
+      readingTime: readingTimeText,
+      MDXContent,
+      newerSlug: newer
+        ? (newer._meta.filePath.replace(/\.mdx$/, '').split('/').pop() ?? null)
+        : null,
+      newerTitle: newer?.title ?? null,
+      olderSlug: older
+        ? (older._meta.filePath.replace(/\.mdx$/, '').split('/').pop() ?? null)
+        : null,
+      olderTitle: older?.title ?? null,
     }
   },
 })
