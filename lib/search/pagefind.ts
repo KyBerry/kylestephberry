@@ -39,3 +39,44 @@ export async function search(query: string) {
   const data = await Promise.all(res.results.slice(0, 20).map((r) => r.data()))
   return data
 }
+
+export interface GroupedResults {
+  posts: PagefindResult[]
+  components: PagefindResult[]
+  designs: PagefindResult[]
+  other: PagefindResult[]
+}
+
+/**
+ * Bucket pagefind results into sections by URL prefix. Within each bucket,
+ * input order (pagefind relevance order) is preserved. Across buckets,
+ * the spec calls for posts first ("posts higher-weighted in ranking").
+ *
+ * Prefix rules (checked in order):
+ *   /blog/        → posts
+ *   /components/  → components
+ *   /designs      → designs   (matches /designs and /designs?design=…)
+ *   anything else → other     (home page, etc.)
+ */
+export function groupResults(results: PagefindResult[]): GroupedResults {
+  const grouped: GroupedResults = {
+    posts: [],
+    components: [],
+    designs: [],
+    other: [],
+  }
+  for (const r of results) {
+    // Strip query/hash before prefix-matching so /designs?design=foo still groups as designs.
+    const path = r.url.split(/[?#]/, 1)[0] ?? r.url
+    if (path.startsWith('/blog/')) {
+      grouped.posts.push(r)
+    } else if (path.startsWith('/components/')) {
+      grouped.components.push(r)
+    } else if (path === '/designs' || path.startsWith('/designs/')) {
+      grouped.designs.push(r)
+    } else {
+      grouped.other.push(r)
+    }
+  }
+  return grouped
+}

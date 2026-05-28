@@ -1,10 +1,10 @@
 'use client'
 
-import { Fragment, type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
+import { Fragment, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import Link from 'next/link'
 import { MagnifyingGlass, X } from '@phosphor-icons/react/dist/ssr'
-import { search, type PagefindResult } from '@/lib/search/pagefind'
+import { groupResults, search, type PagefindResult } from '@/lib/search/pagefind'
 
 interface CommandPaletteProps {
   open: boolean
@@ -93,6 +93,14 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
   const handleClose = useCallback(() => handleOpenChange(false), [handleOpenChange])
 
+  const grouped = useMemo(() => groupResults(results), [results])
+  const sections: Array<{ key: keyof typeof grouped; label: string; items: PagefindResult[] }> = [
+    { key: 'posts', label: 'Posts', items: grouped.posts },
+    { key: 'components', label: 'Components', items: grouped.components },
+    { key: 'designs', label: 'Designs', items: grouped.designs },
+    { key: 'other', label: 'Other', items: grouped.other },
+  ]
+
   return (
     <Dialog.Root open={open} onOpenChange={handleOpenChange}>
       <Dialog.Portal>
@@ -143,24 +151,35 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 No matches
               </p>
             ) : (
-              <ul className="divide-y divide-(--color-border)">
-                {results.map((r) => (
-                  <li key={r.id}>
-                    <Link
-                      href={r.url}
-                      onClick={handleClose}
-                      className="block px-4 py-3 transition-colors hover:bg-(--color-surface-hover)"
-                    >
-                      <p className="text-sm font-medium text-(--color-fg)">
-                        {r.meta.title ?? r.url}
-                      </p>
-                      <p className="mt-1 line-clamp-2 text-xs text-(--color-fg-muted)">
-                        <ExcerptText raw={r.excerpt} />
-                      </p>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+              <div className="divide-y divide-(--color-border)">
+                {sections
+                  .filter((s) => s.items.length > 0)
+                  .map((section) => (
+                    <section key={section.key} aria-label={section.label}>
+                      <h2 className="px-4 pt-3 pb-1 font-mono text-[0.625rem] tracking-[0.18em] text-(--color-fg-subtle) uppercase">
+                        {section.label}
+                      </h2>
+                      <ul className="divide-y divide-(--color-border)">
+                        {section.items.map((r) => (
+                          <li key={r.id}>
+                            <Link
+                              href={r.url}
+                              onClick={handleClose}
+                              className="block px-4 py-3 transition-colors hover:bg-(--color-surface-hover)"
+                            >
+                              <p className="text-sm font-medium text-(--color-fg)">
+                                {r.meta.title ?? r.url}
+                              </p>
+                              <p className="mt-1 line-clamp-2 text-xs text-(--color-fg-muted)">
+                                <ExcerptText raw={r.excerpt} />
+                              </p>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  ))}
+              </div>
             )}
           </div>
         </Dialog.Content>
