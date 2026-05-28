@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import type { Showcase } from 'content-collections'
 import { cn } from '@/lib/utils/cn'
 import { FullscreenStage } from './FullscreenStage'
-import { ScaledStage } from './ScaledStage'
 import { SourcePane } from './SourcePane'
 import { VariantChips } from './VariantChips'
 
@@ -71,15 +70,17 @@ export function ShowcaseFrame({ entry, className }: ShowcaseFrameProps) {
       {/* Body: preview on top, code below — always stacked */}
       <div className="flex flex-col divide-y divide-(--color-border)">
         {/*
-          Scale-to-fit so the whole component fits the preview box. Interactive
-          (unlike the index card): this is the detail page, so the live preview
-          should respond to clicks/hover. The fullscreen escape hatch above still
-          shows it at true 1:1 with scroll.
+          Detail-page preview: render the component at NATURAL size (no scaling)
+          so it's genuinely usable — internal scroll regions (e.g. the
+          virtualized table's row viewport) work, scrollbars are real, and
+          interaction feels 1:1. Tall/wide components scroll within this fixed
+          box; short ones center. (Scaling-to-fit is for the index-card poster
+          only; the fullscreen stage is the full-bleed escape hatch.)
         */}
-        <div className="aspect-[16/10] bg-(--color-bg)">
-          <ScaledStage interactive>
+        <div className="scrollbar-thin h-[440px] overflow-auto bg-(--color-bg)">
+          <div className="flex min-h-full items-center justify-center p-6">
             <ActiveComponent />
-          </ScaledStage>
+          </div>
         </div>
         <div className={expanded ? 'h-[480px]' : ''}>
           <SourcePane

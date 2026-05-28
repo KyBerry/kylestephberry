@@ -77,7 +77,7 @@ export function ScaledStage({
     >
       <div
         ref={contentRef}
-        className={cn('w-fit', !interactive && 'pointer-events-none')}
+        className={cn('w-fit', !interactive && 'preview-static pointer-events-none')}
         style={{
           transform: `scale(${scale})`,
           transformOrigin: 'center center',
