@@ -1,36 +1,106 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfolio
 
-## Getting Started
+Personal portfolio: design-engineer brand, dark monochrome theme with a single sage accent.
 
-First, run the development server:
+## Stack
+
+- Next.js 16 (App Router, Turbopack), React 19, TypeScript 6
+- Tailwind CSS v4 (CSS-first config via `@theme` in `app/globals.css`)
+- content-collections (typed MDX/YAML)
+- @next/mdx + rehype-pretty-code + Shiki (Vesper theme) for code
+- Radix Dialog for showcase fullscreen + designs lightbox + ⌘K palette
+- motion (Framer's successor) for page transitions
+- Lenis for smooth scroll
+- Pagefind for search
+- @vercel/analytics + @vercel/speed-insights
+
+## Develop
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
+pnpm dev          # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Build
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm build        # next build + pagefind postbuild
+pnpm start        # serve the production build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Tooling
 
-## Learn More
+```bash
+pnpm lint
+pnpm exec tsc --noEmit
+pnpm format       # prettier --write
+pnpm format:check
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Content authoring
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+All content lives in `/content`, validated at build time by content-collections.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Blog posts
 
-## Deploy on Vercel
+```
+content/posts/YYYY-MM-DD-slug.mdx
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Frontmatter:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```yaml
+title: string
+summary: string         # ≤ 180 chars
+publishedAt: 'YYYY-MM-DD'
+updatedAt: 'YYYY-MM-DD' | null
+tags: ['react', 'motion']
+featured: boolean       # surfaces on /
+draft: boolean          # excluded from build when true
+heroImage: string | null
+heroAlt: string | null
+```
+
+Available MDX components (auto-registered):
+
+- `<Callout type="note|warn|tip">`
+- `<Showcase slug="hello-button" />`  — embeds a showcase entry inline
+- `<Image src alt width height caption />`
+- `<Video src caption />`
+- `<Figma url height />`
+- `<Tweet id />`
+- `<Steps>` / `<Compare before after />`
+
+### Showcase entries
+
+```
+content/showcase/<slug>/
+  index.mdx          # frontmatter + optional notes
+  component.tsx      # default-exported React component
+  variants/*.tsx     # optional
+```
+
+Frontmatter is similar to posts. The `component.tsx` should `'use client'` and have no required props.
+
+### Figma designs
+
+```
+content/designs/<slug>.yaml
+public/designs/<slug>.{png,webp}    # 2× from Figma
+```
+
+YAML shape: `title`, `summary?`, `image`, `imageAlt`, `imageWidth`, `imageHeight`, `figmaUrl?`, `tags`, `publishedAt`, `featured`.
+
+### Work timeline
+
+`content/work.yaml` (singleton): one `entries[]` array of `{ years, role, company, companyUrl?, context }`.
+
+## Layout & theme
+
+- Theme tokens live in `app/globals.css` inside the `@theme` block — OKLCH warm-neutral palette plus a single sage accent.
+- Container widths come from `--container-prose|grid|hero` tokens; use `<Container variant=…>`.
+- The shared `.prose-portfolio` class styles MDX body content (used by both showcase notes and blog posts).
+
+## Deploying
+
+Push to a Vercel-connected branch. The build runs `next build` + `pagefind` postbuild and serves from Vercel's edge. No env vars needed for the current set of features.
