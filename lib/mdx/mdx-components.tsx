@@ -1,15 +1,28 @@
 import type { MDXComponents } from 'mdx/types'
+import { Callout } from '@/components/mdx/Callout'
+import { Image } from '@/components/mdx/Image'
+import { Video } from '@/components/mdx/Video'
+import { Figma } from '@/components/mdx/Figma'
+import { Tweet } from '@/components/mdx/Tweet'
+import { SmartLink } from '@/components/mdx/SmartLink'
+import { Steps } from '@/components/mdx/Steps'
+import { Compare } from '@/components/mdx/Compare'
+import { ShowcaseEmbed } from '@/components/mdx/ShowcaseEmbed'
 
-/**
- * Shared MDX component overrides — used by blog posts (Plan 6) and showcase
- * notes (Plan 4). Plan 6 adds: Callout, Showcase, Image, Video, Figma, Tweet,
- * Link, Steps, Compare.
- *
- * Default tag-name overrides (h1-h6, p, a, etc.) aren't set here — prose
- * styling is handled at the container level (see .prose-portfolio in
- * app/globals.css) so showcase notes and blog post bodies can have different
- * reading widths.
- */
 export const sharedMDXComponents: MDXComponents = {
-  // Plan 6 adds entries here.
+  Callout,
+  Image,
+  Video,
+  Figma,
+  Tweet,
+  Steps,
+  Compare,
+  // Inline a showcase entry inside any post: <Showcase slug="hello-button" />
+  Showcase: ShowcaseEmbed,
+  // Override the default <a> rendering so internal links are next/link and external get an arrow
+  a: ({ href, children, ...rest }) => (
+    <SmartLink href={href ?? '#'} {...rest}>
+      {children}
+    </SmartLink>
+  ),
 }
