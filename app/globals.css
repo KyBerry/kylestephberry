@@ -72,3 +72,59 @@
     border-radius: 4px;
   }
 }
+
+@layer components {
+  .prose-portfolio {
+    line-height: 1.75;
+    color: var(--color-fg-muted);
+  }
+  .prose-portfolio p {
+    margin-block: 1em;
+  }
+  .prose-portfolio strong {
+    color: var(--color-fg);
+    font-weight: 500;
+  }
+  .prose-portfolio a {
+    color: var(--color-fg);
+    text-decoration: underline;
+    text-decoration-color: var(--color-border-strong);
+    text-underline-offset: 3px;
+    transition: text-decoration-color 150ms;
+  }
+  .prose-portfolio a:hover {
+    text-decoration-color: var(--color-accent);
+  }
+  .prose-portfolio code:not(pre code) {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    color: var(--color-fg);
+    background: var(--color-surface);
+    padding: 0.15em 0.35em;
+    border-radius: 4px;
+  }
+  .prose-portfolio h2,
+  .prose-portfolio h3 {
+    color: var(--color-fg);
+    margin-block: 2em 0.75em;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .prose-portfolio h2 { font-size: 1.5rem; }
+  .prose-portfolio h3 { font-size: 1.125rem; }
+  .prose-portfolio ul,
+  .prose-portfolio ol {
+    margin-block: 1em;
+    padding-left: 1.25em;
+  }
+  .prose-portfolio li { margin-block: 0.35em; }
+  .prose-portfolio pre {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    padding: 1em 1.25em;
+    margin-block: 1.25em;
+    overflow-x: auto;
+    font-size: 0.85em;
+  }
+}
