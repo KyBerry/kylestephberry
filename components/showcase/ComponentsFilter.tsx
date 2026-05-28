@@ -48,9 +48,7 @@ export function ComponentsFilter({ entries }: ComponentsFilterProps) {
         <TagChips tags={tagCounts} active={active} onChange={handleChange} className="mb-10" />
       ) : null}
       {visible.length === 0 ? (
-        <p className="font-mono text-sm text-(--color-fg-subtle)">
-          No components match #{active}.
-        </p>
+        <p className="font-mono text-sm text-(--color-fg-subtle)">No components match #{active}.</p>
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {visible.map((entry) => (

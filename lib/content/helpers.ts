@@ -21,6 +21,20 @@ export function featured<T extends WithDate & WithFeatured>(
   )
 }
 
+/**
+ * Drops the server-only `NotesMDX` component reference from a showcase entry.
+ *
+ * React Server Components can't serialize bare function refs across the RSC
+ * boundary (only "client references" — i.e. components from `'use client'`
+ * modules — survive). Use this before handing showcase entries to any client
+ * component (cards, frame, filter).
+ */
+export function withoutNotes<T extends { NotesMDX: unknown }>(item: T): Omit<T, 'NotesMDX'> {
+  const copy: Omit<T, 'NotesMDX'> & { NotesMDX?: T['NotesMDX'] } = { ...item }
+  delete copy.NotesMDX
+  return copy
+}
+
 type WithSlugAndTags = { slug: string; tags: string[] }
 
 /**

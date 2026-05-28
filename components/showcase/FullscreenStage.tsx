@@ -23,10 +23,10 @@ export function FullscreenStage({ title, children }: FullscreenStageProps) {
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-40 bg-(--color-bg)/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=open]:fade-in data-[state=closed]:animate-out data-[state=closed]:fade-out" />
+        <Dialog.Overlay className="data-[state=open]:animate-in data-[state=open]:fade-in data-[state=closed]:animate-out data-[state=closed]:fade-out fixed inset-0 z-40 bg-(--color-bg)/80 backdrop-blur-sm" />
         <Dialog.Content
           aria-describedby={undefined}
-          className="fixed inset-4 z-50 flex flex-col overflow-hidden rounded-(--radius-card) border border-(--color-border) bg-(--color-surface) shadow-2xl data-[state=open]:animate-in data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:zoom-out-95"
+          className="data-[state=open]:animate-in data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 fixed inset-4 z-50 flex flex-col overflow-hidden rounded-(--radius-card) border border-(--color-border) bg-(--color-surface) shadow-2xl"
         >
           <div className="flex shrink-0 items-center justify-between border-b border-(--color-border) px-4 py-2">
             <Dialog.Title className="font-mono text-xs text-(--color-fg-muted)">

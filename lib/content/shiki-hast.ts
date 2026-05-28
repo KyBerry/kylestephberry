@@ -73,9 +73,9 @@ function stripNode(node: RootContent | ElementContent): SerializableHastChild {
   return { type: 'text', value: '' }
 }
 
-function serialiseProps(
-  props: Record<string, unknown> | null | undefined,
-): { [key: string]: HastPropertyValue } {
+function serialiseProps(props: Record<string, unknown> | null | undefined): {
+  [key: string]: HastPropertyValue
+} {
   const out: { [key: string]: HastPropertyValue } = {}
   if (!props) return out
   for (const [k, v] of Object.entries(props)) {

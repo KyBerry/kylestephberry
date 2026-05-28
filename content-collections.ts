@@ -8,7 +8,6 @@ import { z } from 'zod'
 import path from 'node:path'
 import { readFile, readdir } from 'node:fs/promises'
 import sharp from 'sharp'
-import { highlightCode } from './lib/content/shiki'
 import { highlightCodeToHast } from './lib/content/shiki-hast'
 import type { ComponentType } from 'react'
 
@@ -83,28 +82,27 @@ const showcase = defineCollection({
     const variantsDirRel = path.join('content/showcase', dir, 'variants')
 
     // Default component source + HAST tree
-    const sourceText = await readFile(
-      path.resolve(process.cwd(), componentRelPath),
-      'utf-8',
-    )
+    const sourceText = await readFile(path.resolve(process.cwd(), componentRelPath), 'utf-8')
     const sourceHast = await cache(`hast:${slug}:default:${sourceText.length}`, () =>
       highlightCodeToHast(sourceText, 'tsx'),
     )
 
     // Notes (MDX body of index.mdx), bundled by Next via static import
-    const NotesMDX = createDefaultImport<ComponentType>(
-      `@/content/showcase/${dir}/index.mdx`,
-    )
+    const NotesMDX = createDefaultImport<ComponentType>(`@/content/showcase/${dir}/index.mdx`)
 
     // Default component, bundled via static import
-    const Component = createDefaultImport<ComponentType>(
-      `@/content/showcase/${dir}/component`,
-    )
+    const Component = createDefaultImport<ComponentType>(`@/content/showcase/${dir}/component`)
 
     // Variant sources: read any *.tsx in variants/ (filtered by frontmatter allow-list if given)
-    type VariantRecord = { sourceText: string; sourceHast: Awaited<ReturnType<typeof highlightCodeToHast>> }
+    type VariantRecord = {
+      sourceText: string
+      sourceHast: Awaited<ReturnType<typeof highlightCodeToHast>>
+    }
     const variantSources: Record<string, VariantRecord> = {}
-    const variantComponents: Record<string, ReturnType<typeof createDefaultImport<ComponentType>>> = {}
+    const variantComponents: Record<
+      string,
+      ReturnType<typeof createDefaultImport<ComponentType>>
+    > = {}
 
     let variantFiles: string[] = []
     try {
@@ -121,10 +119,7 @@ const showcase = defineCollection({
 
     for (const file of variantFiles) {
       const name = file.replace(/\.tsx$/, '')
-      const text = await readFile(
-        path.resolve(process.cwd(), variantsDirRel, file),
-        'utf-8',
-      )
+      const text = await readFile(path.resolve(process.cwd(), variantsDirRel, file), 'utf-8')
       const hast = await cache(`hast:${slug}:${name}:${text.length}`, () =>
         highlightCodeToHast(text, 'tsx'),
       )

@@ -26,13 +26,13 @@ export function ShowcaseFrame({ entry, className }: ShowcaseFrameProps) {
   const hasVariants = variantNames.length > 0
 
   const [active, setActive] = useState(DEFAULT_KEY)
-  const [expanded, setExpanded] = useState(true)
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return
+  // Initialise from localStorage lazily — avoids the cascading setState-in-effect
+  // pattern that triggers react-hooks/set-state-in-effect.
+  const [expanded, setExpanded] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return true
     const stored = window.localStorage.getItem(`showcase-source-expanded:${entry.slug}`)
-    if (stored !== null) setExpanded(stored === '1')
-  }, [entry.slug])
+    return stored === null ? true : stored === '1'
+  })
 
   useEffect(() => {
     if (typeof window === 'undefined') return

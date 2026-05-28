@@ -29,7 +29,7 @@ export function VariantChips({
             aria-checked={isActive}
             onClick={() => onChange(v)}
             className={cn(
-              'rounded-md border px-2 py-1 font-mono text-[10px] uppercase tracking-[0.12em] transition-colors',
+              'rounded-md border px-2 py-1 font-mono text-[10px] tracking-[0.12em] uppercase transition-colors',
               isActive
                 ? 'border-(--color-border-strong) bg-(--color-surface-hover) text-(--color-fg)'
                 : 'border-(--color-border) text-(--color-fg-muted) hover:border-(--color-border-strong) hover:text-(--color-fg)',

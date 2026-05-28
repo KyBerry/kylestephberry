@@ -5,7 +5,7 @@ import { Section } from '@/components/ui/Section'
 import { ShowcaseCard } from '@/components/showcase/ShowcaseCard'
 import { DesignTile } from '@/components/designs/DesignTile'
 import { PostCard } from '@/components/blog/PostCard'
-import { featured, latest } from '@/lib/content/helpers'
+import { featured, latest, withoutNotes } from '@/lib/content/helpers'
 
 export default function HomePage() {
   const featuredShowcases = featured(allShowcases, 6)
@@ -25,8 +25,8 @@ export default function HomePage() {
           <p className="font-mono text-sm text-(--color-fg-subtle)">More coming soon.</p>
         ) : (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {featuredShowcases.map(({ NotesMDX: _NotesMDX, ...entry }) => (
-              <ShowcaseCard key={entry.slug} entry={entry} />
+            {featuredShowcases.map((entry) => (
+              <ShowcaseCard key={entry.slug} entry={withoutNotes(entry)} />
             ))}
           </div>
         )}

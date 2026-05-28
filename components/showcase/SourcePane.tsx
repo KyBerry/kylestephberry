@@ -81,7 +81,10 @@ export function SourcePane({
               aria-expanded={expanded}
               className="inline-flex h-6 w-6 items-center justify-center rounded text-(--color-fg-muted) transition-colors hover:bg-(--color-surface) hover:text-(--color-fg)"
             >
-              <span aria-hidden className={cn('transition-transform', expanded ? '' : '-rotate-90')}>
+              <span
+                aria-hidden
+                className={cn('transition-transform', expanded ? '' : '-rotate-90')}
+              >
                 ▾
               </span>
             </button>
