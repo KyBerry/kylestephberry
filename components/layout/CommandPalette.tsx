@@ -27,7 +27,10 @@ function ExcerptText({ raw }: { raw: string }) {
     } else if (tok) {
       out.push(
         inMark ? (
-          <mark key={i} className="rounded-sm bg-(--color-accent-soft) px-0.5 text-(--color-accent)">
+          <mark
+            key={i}
+            className="rounded-sm bg-(--color-accent-soft) px-0.5 text-(--color-accent)"
+          >
             {tok}
           </mark>
         ) : (
@@ -46,27 +49,36 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   const inputRef = useRef<HTMLInputElement | null>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // Reset state when the dialog closes
-  useEffect(() => {
-    if (!open) {
-      setQuery('')
-      setResults([])
-      setLoading(false)
-    }
-  }, [open])
+  const trimmed = query.trim()
+  const queryShort = trimmed.length < 2
 
-  // Debounced search on query change
+  // Wrap onOpenChange to also reset state on close (event-driven, not effect-driven).
+  const handleOpenChange = useCallback(
+    (next: boolean) => {
+      if (!next) {
+        setQuery('')
+        setResults([])
+        setLoading(false)
+        if (debounceRef.current) {
+          clearTimeout(debounceRef.current)
+          debounceRef.current = null
+        }
+      }
+      onOpenChange(next)
+    },
+    [onOpenChange],
+  )
+
+  // Debounced search on query change. Only fires when query is long enough; otherwise
+  // render falls through to the short-query branch and any stale `results` are not shown.
+  // setState is only called from inside the timer callback (async) — never synchronously
+  // in the effect body — so this satisfies react-hooks/set-state-in-effect.
   useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current)
-    if (!open) return
-    if (query.trim().length < 2) {
-      setResults([])
-      return
-    }
-    setLoading(true)
+    if (!open || queryShort) return
     debounceRef.current = setTimeout(async () => {
+      setLoading(true)
       try {
-        const r = await search(query)
+        const r = await search(trimmed)
         setResults(r)
       } catch {
         setResults([])
@@ -77,21 +89,21 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current)
     }
-  }, [query, open])
+  }, [trimmed, queryShort, open])
 
-  const handleClose = useCallback(() => onOpenChange(false), [onOpenChange])
+  const handleClose = useCallback(() => handleOpenChange(false), [handleOpenChange])
 
   return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
+    <Dialog.Root open={open} onOpenChange={handleOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-40 bg-(--color-bg)/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=open]:fade-in data-[state=closed]:animate-out data-[state=closed]:fade-out" />
+        <Dialog.Overlay className="data-[state=open]:animate-in data-[state=open]:fade-in data-[state=closed]:animate-out data-[state=closed]:fade-out fixed inset-0 z-40 bg-(--color-bg)/80 backdrop-blur-sm" />
         <Dialog.Content
           aria-describedby={undefined}
           onOpenAutoFocus={(e) => {
             e.preventDefault()
             inputRef.current?.focus()
           }}
-          className="fixed top-[10vh] left-1/2 z-50 flex w-[min(640px,90vw)] -translate-x-1/2 flex-col overflow-hidden rounded-(--radius-card) border border-(--color-border) bg-(--color-surface) shadow-2xl data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:zoom-out-95"
+          className="data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:zoom-out-95 fixed top-[10vh] left-1/2 z-50 flex w-[min(640px,90vw)] -translate-x-1/2 flex-col overflow-hidden rounded-(--radius-card) border border-(--color-border) bg-(--color-surface) shadow-2xl"
         >
           <Dialog.Title className="sr-only">Search</Dialog.Title>
 
@@ -118,13 +130,13 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
           </div>
 
           <div className="max-h-[60vh] min-h-[120px] overflow-y-auto">
-            {loading ? (
-              <p className="px-4 py-6 text-center font-mono text-xs text-(--color-fg-subtle)">
-                Searching…
-              </p>
-            ) : query.trim().length < 2 ? (
+            {queryShort ? (
               <p className="px-4 py-6 text-center font-mono text-xs text-(--color-fg-subtle)">
                 Type at least 2 characters
+              </p>
+            ) : loading ? (
+              <p className="px-4 py-6 text-center font-mono text-xs text-(--color-fg-subtle)">
+                Searching…
               </p>
             ) : results.length === 0 ? (
               <p className="px-4 py-6 text-center font-mono text-xs text-(--color-fg-subtle)">

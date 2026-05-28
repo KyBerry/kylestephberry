@@ -64,7 +64,7 @@ heroAlt: string | null
 Available MDX components (auto-registered):
 
 - `<Callout type="note|warn|tip">`
-- `<Showcase slug="hello-button" />`  — embeds a showcase entry inline
+- `<Showcase slug="hello-button" />` — embeds a showcase entry inline
 - `<Image src alt width height caption />`
 - `<Video src caption />`
 - `<Figma url height />`

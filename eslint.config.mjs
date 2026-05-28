@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
     'next-env.d.ts',
     // content-collections generates files at build time; not our source.
     '.content-collections/**',
+    // pagefind vendor bundle is generated at build time into public/.
+    'public/_pagefind/**',
   ]),
 ])
 

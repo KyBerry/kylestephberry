@@ -50,7 +50,9 @@ export function Header() {
             >
               <MagnifyingGlass weight="regular" size={14} />
               <span className="hidden sm:inline">Search</span>
-              <kbd className="hidden font-mono text-[10px] text-(--color-fg-subtle) sm:inline">⌘K</kbd>
+              <kbd className="hidden font-mono text-[10px] text-(--color-fg-subtle) sm:inline">
+                ⌘K
+              </kbd>
             </button>
           </nav>
         </Container>
