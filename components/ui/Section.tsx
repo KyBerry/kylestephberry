@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils/cn'
 interface SectionProps {
   eyebrow: string
   heading: string
+  intro?: string
   seeAllHref?: string
   seeAllLabel?: string
   containerVariant?: 'prose' | 'grid' | 'hero'
@@ -17,6 +18,7 @@ interface SectionProps {
 export function Section({
   eyebrow,
   heading,
+  intro,
   seeAllHref,
   seeAllLabel = 'See all',
   containerVariant = 'grid',
@@ -33,6 +35,11 @@ export function Section({
           <h2 className="text-3xl font-medium tracking-[-0.02em] text-balance text-(--color-fg) md:text-4xl">
             {heading}
           </h2>
+          {intro ? (
+            <p className="mt-3 max-w-prose text-sm leading-relaxed text-(--color-fg-muted)">
+              {intro}
+            </p>
+          ) : null}
         </div>
         {seeAllHref ? (
           <Link

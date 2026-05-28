@@ -1,16 +1,17 @@
 ---
 title: 'Hello button'
-summary: 'A first showcase entry — a button that increments a counter on click.'
+summary: 'A simple stateful button — the baseline every component library starts with.'
 publishedAt: '2026-05-20'
-tags: ['button', 'click']
-featured: true
+tags: ['button', 'interaction']
+featured: false
 mountStrategy: 'always'
 ---
 
-A trivial component used to exercise the showcase pipeline end-to-end. Click
-the button; the counter under it goes up. The point isn't the interaction —
-it's the surrounding scaffolding: schema validation, transform extracting the
-source text, Shiki highlighting at build time, and Next bundling the component
-itself so it can render live inside the frame.
+Every component library starts somewhere. This is the simplest possible interactive
+component: a button that increments a counter. No animation, no state machine — just
+`useState` and a click handler.
 
-A real component catalog grows in over time.
+The value here is infrastructure: the surrounding scaffolding handles schema validation,
+Shiki source highlighting at build time, and Next bundling the component for live
+rendering in the frame. The real components built on top of this pipeline are the ones
+in the rest of the catalog.

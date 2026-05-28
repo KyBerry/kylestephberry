@@ -1,0 +1,27 @@
+---
+title: 'I18n formatting playground'
+summary: 'A locale switcher for currency, dates, relative time, compact numbers, plural labels, and RTL layout behavior.'
+publishedAt: '2026-05-28'
+tags: ['i18n', 'accessibility', 'data', 'interaction']
+featured: true
+mountStrategy: 'always'
+---
+
+Internationalization bugs often hide in plain sight because English happens to be forgiving. A
+number can be readable with the wrong separators, a date can look plausible in the wrong order, and
+plural text can sound close enough that the product ships with a tiny paper cut in every workflow.
+This playground makes those differences visible.
+
+The component uses the platform `Intl` APIs instead of formatting strings by hand: `NumberFormat`
+for currency and compact counts, `DateTimeFormat` for the event time, `RelativeTimeFormat` for due
+dates, `PluralRules` for label changes, and `ListFormat` for collaborator names. The controls are
+small, but they cover the surface area where most product UI tends to cheat.
+
+Arabic is included because right-to-left support changes layout, not just copy. The preview card
+sets `dir="rtl"` for the Arabic locale, so alignment, inline ordering, and punctuation flow through
+the browser's bidirectional text engine instead of a custom class toggle. That keeps the demo closer
+to how a production app should behave.
+
+The most useful i18n habit is to treat locale as data, not decoration. If a component receives a
+locale, it should hand formatting to locale-aware APIs and let directionality participate in layout
+from the top of the subtree.

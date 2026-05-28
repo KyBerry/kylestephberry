@@ -36,6 +36,11 @@ export function WorkTimeline({ entries }: WorkTimelineProps) {
               ) : (
                 <span className="text-(--color-fg-muted)">{entry.company}</span>
               )}
+              {entry.contract ? (
+                <span className="rounded-md border border-(--color-border) px-1.5 py-0.5 font-mono text-[10px] tracking-wide text-(--color-fg-subtle)">
+                  Contract
+                </span>
+              ) : null}
             </div>
             <p className="text-sm text-(--color-fg-muted)">{entry.context}</p>
           </div>

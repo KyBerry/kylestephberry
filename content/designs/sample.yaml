@@ -1,5 +1,5 @@
 title: Sample
-summary: Placeholder design entry used during stand-up.
+summary: A placeholder swatch used to verify the designs pipeline end-to-end.
 image: /designs/sample.png
 imageAlt: A sage-tinted placeholder rectangle.
 imageWidth: 1280
@@ -8,4 +8,4 @@ figmaUrl: null
 tags:
   - placeholder
 publishedAt: '2026-05-25'
-featured: true
+featured: false

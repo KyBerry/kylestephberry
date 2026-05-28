@@ -1,0 +1,36 @@
+---
+title: 'AI stream'
+summary: 'Token-by-token text streaming with natural timing variance — a weekend exploration of AI response UX.'
+publishedAt: '2026-05-22'
+tags: ['motion', 'ai', 'streaming']
+featured: true
+mountStrategy: 'always'
+---
+
+I built this on a weekend after noticing that most AI chat interfaces feel mechanical even when
+the model is fast. The text lurches forward in uneven jumps — a burst of five words, a pause,
+another burst — and the experience reads as network instability rather than thinking. I wanted
+to understand whether a small scheduling layer could make the same content feel significantly
+more natural.
+
+The core problem is that tokens don't arrive at even intervals. A language model emits them in
+small bursts with variable gaps between sentences and at punctuation boundaries. Naively rendering
+each chunk the moment it arrives preserves all that variance. The fix is to pull each token off the
+wire and schedule its appearance with a per-token delay drawn from a small distribution —
+roughly 30–80 ms base, with an extra 150–220 ms pause after sentence-ending punctuation. That
+smoothing makes the visual rhythm read as deliberate speech rather than network jitter.
+
+The blinking cursor is a deliberate state signal. It appears the moment streaming begins and is
+removed as soon as the final token is committed — not on a fixed timer, but in direct response to
+completion. I spent more time on this than I expected: a cursor that keeps blinking after the
+response finishes reads as "still loading," which creates real anxiety. Syncing blink lifetime
+exactly to stream lifetime turned out to matter.
+
+The demo simulates jitter client-side rather than pulling from a live SSE endpoint. Real production
+streaming has genuine variance driven by model inference speed, token length, and network RTT —
+the simulation approximates the shape of that distribution but can't reproduce occasional
+multi-second stalls on hard reasoning steps. For a component library context the simulation is the
+right call: it runs offline and keeps the demo deterministic.
+
+Accessibility: the output container uses `aria-live="polite"`, which lets screen readers announce
+completed sentences without interrupting mid-stream.

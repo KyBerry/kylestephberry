@@ -274,6 +274,7 @@ const work = defineSingleton({
         role: z.string(),
         company: z.string(),
         companyUrl: z.string().url().nullable().default(null),
+        contract: z.boolean().default(false),
         context: z.string(),
       }),
     ),

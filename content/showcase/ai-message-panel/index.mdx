@@ -1,0 +1,27 @@
+---
+title: 'AI message panel'
+summary: 'A product-shaped AI response panel with streaming text, stop and regenerate controls, live status, and expandable citation chips.'
+publishedAt: '2026-05-28'
+tags: ['ai', 'streaming', 'accessibility', 'interaction']
+featured: true
+mountStrategy: 'on-hover'
+---
+
+The original `ai-stream` demo explored pacing: how token timing changes the way a generated answer
+feels. This panel takes the same idea one layer closer to product UI. The message has a user prompt,
+a streamed assistant answer, controls for stopping and regenerating, and citations that can expand
+inline without sending the reader away from the answer.
+
+The important part is that the citation UI is not decorative. Each chip has a marker that matches
+the assistant text, an expanded state, and a short source excerpt. In production that source would
+need a durable document id and a permission check, but the interaction contract is the same: make
+the model's claim traceable at the exact moment the user is deciding whether to trust it.
+
+Accessibility shapes the streaming behavior. The answer uses a polite live region so assistive
+technology can announce changes without interrupting the current task. The status label exposes
+whether the response is generating, complete, or stopped, and the controls remain ordinary buttons
+instead of custom divs with click handlers.
+
+Motion is intentionally restrained. The small activity meter and cursor give sighted users a state
+signal during generation, but `prefers-reduced-motion` removes the pulsing and shortens the token
+delay so the interaction does not become a forced animation.

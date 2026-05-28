@@ -1,0 +1,27 @@
+---
+title: 'Virtualized table'
+summary: 'A sortable account grid with keyboard row focus, sticky headers, and hand-rolled windowing for large dashboard tables.'
+publishedAt: '2026-05-28'
+tags: ['data', 'dashboard', 'accessibility', 'keyboard']
+featured: true
+mountStrategy: 'always'
+---
+
+Large dashboard tables fail in two different ways. They can become slow because the browser is
+painting hundreds of rows at once, or they can become inaccessible because the optimization erases
+the structure assistive technology needs. I wanted this prototype to sit in the middle: a real
+windowed grid that still exposes row count, column count, sortable headers, active row focus, and
+selected row state.
+
+The implementation uses a small fixed-height virtualizer rather than a dependency. The scroll
+viewport knows the row height, calculates a start and end index with a little overscan, and renders
+only that slice on an absolutely positioned track. The full height stays intact, so the scrollbar
+still communicates the size of the dataset while React only reconciles the visible rows.
+
+The accessibility details matter more than the math. Header cells carry `aria-sort`, the grid keeps
+an `aria-activedescendant` pointer to the active row, and rows expose `aria-selected` independently
+from hover. Keyboard users can move with arrow keys, jump with Home/End or Page Up/Page Down, and
+press Enter or Space to pin a row summary.
+
+This is the dashboard pattern I trust most: keep the performance technique private, but keep the
+data model public. A virtualized table should feel smaller to the browser, not smaller to the user.

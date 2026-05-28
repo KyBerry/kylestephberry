@@ -57,3 +57,7 @@ public/_pagefind/
 
 # MCP tooling artefacts
 .playwright-mcp/
+
+# Internal working docs — kept out of the public repo
+/docs/superpowers/
+/docs/resume-portfolio-alignment-*.md

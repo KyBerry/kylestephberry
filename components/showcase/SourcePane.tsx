@@ -92,7 +92,10 @@ export function SourcePane({
         </div>
       </div>
       {expanded ? (
-        <div className="min-h-0 flex-1 overflow-auto px-4 py-3 font-mono text-[13px] leading-relaxed [&_pre]:!bg-transparent">
+        <div
+          data-lenis-prevent
+          className="min-h-0 flex-1 overflow-auto px-4 py-3 font-mono text-[13px] leading-relaxed [&_pre]:!bg-transparent"
+        >
           {tree}
         </div>
       ) : null}

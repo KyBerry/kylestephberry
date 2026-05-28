@@ -3,4 +3,29 @@ entries:
     role: 'Design Engineer'
     company: 'Independent'
     companyUrl: null
-    context: 'Designing and building product surfaces across web and mobile.'
+    context: 'Designing and building product surfaces across web and mobile. Shipping this site.'
+
+  - years: '2024–2025'
+    role: 'Software Engineer'
+    company: 'AirframeAI'
+    companyUrl: 'https://www.airframe.ai'
+    contract: true
+    context: 'Built SSR features and real-time AI streaming interfaces with React and Next.js for an AI-powered software discovery platform.'
+
+  - years: '2022–present'
+    role: 'Software Engineer II'
+    company: 'Bill'
+    companyUrl: 'https://www.bill.com'
+    context: 'Building the Accountant Console — data dashboards, complex visualizations, and a11y/i18n work inside a React + Angular micro-frontend architecture.'
+
+  - years: '2020–2022'
+    role: 'Lead, Full Stack Developer'
+    company: 'Truvy'
+    companyUrl: 'https://www.truvy.com'
+    context: 'Led frontend development and design systems for truTransformation — Figma prototyping, design system architecture, e-commerce platform on Nuxt/Vue.'
+
+  - years: '2019–2020'
+    role: 'QA Engineer'
+    company: 'BMA Banking Systems'
+    companyUrl: 'https://bmabankingsystems.com'
+    context: 'Automated documentation workflows with Python and built Jira integrations for banking QA teams.'

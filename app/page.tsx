@@ -16,11 +16,20 @@ export default function HomePage() {
     <>
       <Hero />
 
-      <Section eyebrow="Work" heading="Where I've been">
+      <Section
+        eyebrow="Work"
+        heading="Where I've been"
+        intro="Five years across fintech, wellness, and AI — from QA automation to leading frontend architecture and building production-scale product UIs."
+      >
         <WorkTimeline entries={work.entries} />
       </Section>
 
-      <Section eyebrow="Components" heading="Interactive components" seeAllHref="/components">
+      <Section
+        eyebrow="Components"
+        heading="Interactive components"
+        intro="Isolated UI patterns — each one traceable to a real product challenge. Code visible in the frame."
+        seeAllHref="/components"
+      >
         {featuredShowcases.length === 0 ? (
           <p className="font-mono text-sm text-(--color-fg-subtle)">More coming soon.</p>
         ) : (
@@ -32,7 +41,12 @@ export default function HomePage() {
         )}
       </Section>
 
-      <Section eyebrow="Designs" heading="Selected design work" seeAllHref="/designs">
+      <Section
+        eyebrow="Designs"
+        heading="Selected design work"
+        intro="Screens, systems, and prototypes from fintech dashboards to consumer wellness platforms."
+        seeAllHref="/designs"
+      >
         {featuredDesigns.length === 0 ? (
           <p className="font-mono text-sm text-(--color-fg-subtle)">More coming soon.</p>
         ) : (
@@ -44,7 +58,12 @@ export default function HomePage() {
         )}
       </Section>
 
-      <Section eyebrow="Writing" heading="Recent notes" seeAllHref="/blog">
+      <Section
+        eyebrow="Writing"
+        heading="Recent notes"
+        intro="Craft thinking on motion, architecture, accessibility, and the seam between design and engineering."
+        seeAllHref="/blog"
+      >
         {latestPosts.length === 0 ? (
           <p className="font-mono text-sm text-(--color-fg-subtle)">More coming soon.</p>
         ) : (

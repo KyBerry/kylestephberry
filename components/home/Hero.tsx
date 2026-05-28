@@ -71,6 +71,16 @@ export function Hero() {
         {site.shortBio}
       </p>
 
+      {'currentFocus' in site && site.currentFocus ? (
+        <p className="mt-4 font-mono text-xs text-(--color-fg-subtle)">
+          <span className="mr-2 text-(--color-accent)">→</span>
+          {site.currentFocus}
+          {'location' in site && site.location ? (
+            <span className="ml-4 opacity-60">· {site.location as string}</span>
+          ) : null}
+        </p>
+      ) : null}
+
       <nav className="mt-10 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
         {site.socials.map((s) => (
           <a
