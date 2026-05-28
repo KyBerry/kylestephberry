@@ -1,6 +1,6 @@
 ---
 title: 'Micro-frontends: an honest assessment'
-summary: 'The pattern has real strengths and real costs. Here is what I think is worth understanding before you reach for it.'
+summary: 'The pattern has real upsides and real costs. Here is what I think you should know before you reach for it.'
 publishedAt: '2026-05-26'
 tags: ['architecture', 'engineering', 'frontend']
 featured: true
@@ -9,27 +9,27 @@ featured: true
 import { Callout } from '@/components/mdx/Callout'
 
 Micro-frontends have been a recurring topic in frontend architecture writing for a few
-years now. I've read a lot of the literature, dug into the Webpack Module Federation docs,
-and built some small experiments to understand the tradeoffs firsthand. Here's my honest
-read on when the pattern earns its complexity and when it doesn't.
+years now. I've read a lot of the writing on them, dug into the Webpack Module Federation
+docs, and built a few small experiments to feel out the tradeoffs myself. Here's my honest
+read on when the pattern is worth the complexity and when it isn't.
 
 ## What the pattern actually promises
 
-The core pitch is deployment independence: teams own discrete UI slices that they can
-build, test, and ship without coordinating a monorepo release with every other team.
-For organizations where frontend release cycles are a bottleneck, that's a real gain.
-The secondary pitch — stack diversity, mix Angular and React in the same shell — is
-usually a liability dressed up as a feature.
+The core pitch is deployment independence: teams own their own UI slices and can
+build, test, and ship them without coordinating a monorepo release with everyone else.
+If your frontend release cycle is a bottleneck, that's a real win. The secondary pitch,
+stack diversity (mixing Angular and React in the same shell), is usually a liability
+dressed up as a feature.
 
 ## What holds up
 
-**Team autonomy is real at scale.** When a team can push a remote module to CDN
-independently, release coordination disappears as a constraint. That matters when you
-have many teams, each with their own cadence.
+**Team autonomy is real at scale.** When a team can push a remote module to CDN on its
+own, release coordination stops being a constraint. That matters when you have many
+teams, each on their own cadence.
 
-**Module Federation is genuinely capable.** Webpack 5's Module Federation and the
-newer Vite/Rspack equivalents make runtime composition practical. The mechanics of
-sharing a host application with dynamically loaded remotes work reliably.
+**Module Federation works.** Webpack 5's Module Federation and the newer Vite/Rspack
+equivalents make runtime composition practical. Sharing a host application with
+dynamically loaded remotes works reliably.
 
 ## What the case studies leave out
 
@@ -39,8 +39,8 @@ explicit governance (bundle-size gates in CI, shared dependency version pinning)
 drift into independent performance debt that the shell application can't see.
 
 **Shared authentication is awkward.** The shell handles the token; remotes need it.
-Common approaches — a shared context object on `window`, a lightweight event bus, a
-dedicated auth module — all add coordination surface that a monolith handles for free.
+Common approaches (a shared context object on `window`, a lightweight event bus, a
+dedicated auth module) all add coordination surface that a monolith handles for free.
 
 **Cross-seam integration testing is under-specified.** Unit tests live within each
 remote. Integration tests that span the shell and multiple remotes require a local
@@ -48,18 +48,17 @@ orchestration setup that different teams configure differently. Contract testing
 is the principled answer; in practice it's frequently skipped.
 
 <Callout type="note">
-Module Federation's TypeScript type-sharing story requires manual coordination — type
-stubs or the TypeScript plugin — to keep remote interfaces in sync. Budget time for this;
+Module Federation's TypeScript type-sharing story requires manual coordination (type
+stubs or the TypeScript plugin) to keep remote interfaces in sync. Budget time for this;
 it's not automatic.
 </Callout>
 
 ## My read
 
-Start with a monorepo and a single framework. Extract modules into separately deployable
-units only when you have a real, proven team-ownership boundary that justifies the overhead.
-The performance, testing, and DX costs of micro-frontends are real. Earn the complexity
-before you introduce it.
+Start with a monorepo and a single framework. Split modules into separately deployable
+units only when you have a real, proven team-ownership boundary that's worth the overhead.
+The performance, testing, and DX costs are real. Earn the complexity before you take it on.
 
-If you're inheriting a micro-frontend architecture, the patterns are learnable and the
-autonomy benefits are genuine. Just go in with eyes open about where the seams are and
-what governance they require.
+If you're inheriting a micro-frontend setup, don't panic. The patterns are learnable and
+the autonomy is worth something. Just go in knowing where the seams are and what they ask
+of you to keep them in sync.

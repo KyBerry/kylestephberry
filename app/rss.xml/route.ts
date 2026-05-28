@@ -30,7 +30,7 @@ export function GET(): Response {
 
   const feed = `<?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>${esc(site.name)} — ${esc(site.role)}</title>
+  <title>${esc(site.name)} · ${esc(site.role)}</title>
   <link href="${esc(site.url)}/rss.xml" rel="self"/>
   <link href="${esc(site.url)}"/>
   <id>${esc(site.url)}/</id>

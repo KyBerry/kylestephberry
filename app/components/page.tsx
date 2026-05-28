@@ -7,12 +7,12 @@ import { latest, withoutNotes } from '@/lib/content/helpers'
 
 export const metadata: Metadata = {
   title: 'Components',
-  description: 'Interactive UI components — live previews with source.',
+  description: 'Interactive UI components with live previews and source.',
 }
 
 export default function ComponentsIndexPage() {
   // Strip server-only NotesMDX function refs before handing off to the
-  // client filter — React can't serialize them across the RSC boundary.
+  // client filter, React can't serialize them across the RSC boundary.
   const all = latest(allShowcases, allShowcases.length).map(withoutNotes)
 
   return (
@@ -25,8 +25,8 @@ export default function ComponentsIndexPage() {
           Interactive components
         </h1>
         <p className="mt-4 max-w-prose text-(--color-fg-muted)">
-          Real interface surfaces — data tables, dashboards, AI streams, command palettes, and
-          i18n playgrounds. Each card runs the actual component; click through to see the source.
+          Data tables, dashboards, AI streams, command palettes, and i18n playgrounds. Each card
+          runs the real component; click through for the source.
         </p>
       </header>
 

@@ -89,9 +89,9 @@ const posts = defineCollection({
  * Showcase
  *
  * Each entry lives in a directory: content/showcase/<slug>/
- *   index.mdx        — frontmatter + optional written notes (body is MDX)
- *   component.tsx    — default-exported React component
- *   variants/*.tsx   — (optional) alt versions, added in Plan 4+
+ *   index.mdx        - frontmatter + optional written notes (body is MDX)
+ *   component.tsx    - default-exported React component
+ *   variants/*.tsx   - (optional) alt versions, added in Plan 4+
  *
  * The transform inlines the sibling component.tsx source as text +
  * pre-rendered Shiki HTML, and exposes the component via createDefaultImport.
@@ -145,7 +145,7 @@ const showcase = defineCollection({
       const all = await readdir(path.resolve(process.cwd(), variantsDirRel))
       variantFiles = all.filter((f) => f.endsWith('.tsx'))
     } catch {
-      // No variants directory — leave variantSources empty.
+      // No variants directory, leave variantSources empty.
     }
 
     if (doc.variants && doc.variants.length > 0) {
@@ -186,7 +186,7 @@ const showcase = defineCollection({
  * `scripts/derive-design-blurhashes.ts` (wired as `prebuild`), which writes
  * an mtime-keyed cache to `content/.cache/design-blur.json`. The transform
  * below reads that cache when an entry exists, and falls back to computing
- * the blur inline with sharp when it doesn't — so `pnpm dev` works without
+ * the blur inline with sharp when it doesn't, so `pnpm dev` works without
  * a prebuild step.
  * ---------------------------------------------------------------- */
 

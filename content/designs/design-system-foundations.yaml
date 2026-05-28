@@ -1,7 +1,7 @@
 title: Design System Foundations
-summary: A personal Figma study of design token architecture — color roles, type scale, spacing primitives, and Figma-to-code variable mapping.
+summary: A study of design tokens, covering color roles, type scale, spacing, and Figma-to-code variables.
 image: /designs/design-system-foundations.png
-imageAlt: Design system foundations study — color tokens, type scale, spacing ramp
+imageAlt: Design system foundations study with color tokens, type scale, and spacing ramp
 imageWidth: 1280
 imageHeight: 800
 figmaUrl: null

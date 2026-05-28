@@ -19,7 +19,7 @@ export default function HomePage() {
       <Section
         eyebrow="Work"
         heading="Where I've been"
-        intro="Five years across fintech, wellness, and AI — from QA automation to leading frontend architecture and building production-scale product UIs."
+        intro="Five years across fintech, wellness, and AI, from QA automation to leading frontend architecture and building production-scale product UIs."
       >
         <WorkTimeline entries={work.entries} />
       </Section>
@@ -27,7 +27,7 @@ export default function HomePage() {
       <Section
         eyebrow="Components"
         heading="Interactive components"
-        intro="Isolated UI patterns — each one traceable to a real product challenge. Code visible in the frame."
+        intro="Interface patterns I build on my own time. Each one runs live, and the source is a click away."
         seeAllHref="/components"
       >
         {featuredShowcases.length === 0 ? (
@@ -44,7 +44,7 @@ export default function HomePage() {
       <Section
         eyebrow="Designs"
         heading="Selected design work"
-        intro="Screens, systems, and prototypes from fintech dashboards to consumer wellness platforms."
+        intro="Personal Figma work, from dashboard layouts to wellness apps and design systems."
         seeAllHref="/designs"
       >
         {featuredDesigns.length === 0 ? (
@@ -61,7 +61,7 @@ export default function HomePage() {
       <Section
         eyebrow="Writing"
         heading="Recent notes"
-        intro="Craft thinking on motion, architecture, accessibility, and the seam between design and engineering."
+        intro="Notes on motion, architecture, accessibility, and where design and engineering overlap."
         seeAllHref="/blog"
       >
         {latestPosts.length === 0 ? (

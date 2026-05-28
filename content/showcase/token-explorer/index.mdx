@@ -1,6 +1,6 @@
 ---
 title: 'Token explorer'
-summary: 'An interactive design token viewer — the kind of internal tool that makes a design system actually usable.'
+summary: 'An interactive design token viewer, the kind of internal tool that makes a design system actually usable.'
 publishedAt: '2026-05-24'
 tags: ['design-systems', 'tooling', 'interaction']
 featured: true
@@ -12,13 +12,13 @@ I've read about: tokens drift. Engineers reach for the wrong variable because th
 the exact name. Colors get tweaked in one place and not another. The gap between the documented
 system and the live system widens quietly over time.
 
-The antidote I kept reading about was visibility — a live reference where anyone on a team can
-see the full palette, the type scale, and the spacing ramp, and copy the exact variable name
-without digging through a Figma file or a CSS source. This component is a prototype of that tool.
+The fix I kept reading about was visibility: a live reference where anyone on a team can see the
+full palette, the type scale, and the spacing ramp, and copy the exact variable name without
+digging through a Figma file or a CSS source. This component is a prototype of that tool.
 
 Three tabs: Color, Typography, Space. Click any swatch to copy its CSS variable name to clipboard.
-The implementation uses CSS custom properties directly rather than a Tailwind token mapping layer
-— which means the tokens you're browsing are the real, live tokens powering this page. There's no
+The implementation uses CSS custom properties directly rather than a Tailwind token-mapping layer,
+so the tokens you're browsing are the real, live tokens powering this page. There's no
 abstraction gap between what you see and what you'd write in code.
 
 One thing I'd extend in a production version: a search input. When a system has 60+ tokens across

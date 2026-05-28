@@ -13,7 +13,7 @@ interface MotionLayerProps {
  * Concrete client-side composition of the motion layer.
  *
  * Lives in its own module so `next/dynamic({ ssr: false })` in
- * `ClientMotion` can code-split it out of the initial bundle —
+ * `ClientMotion` can code-split it out of the initial bundle,
  * neither `lenis` nor `motion` is loaded until this chunk arrives
  * on the client.
  */

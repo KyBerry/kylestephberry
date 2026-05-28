@@ -25,8 +25,8 @@ export function featured<T extends WithDate & WithFeatured>(
  * Drops the server-only `NotesMDX` component reference from a showcase entry.
  *
  * React Server Components can't serialize bare function refs across the RSC
- * boundary (only "client references" — i.e. components from `'use client'`
- * modules — survive). Use this before handing showcase entries to any client
+ * boundary (only "client references", i.e. components from `'use client'`
+ * modules, survive). Use this before handing showcase entries to any client
  * component (cards, frame, filter).
  */
 export function withoutNotes<T extends { NotesMDX: unknown }>(item: T): Omit<T, 'NotesMDX'> {
@@ -38,7 +38,7 @@ export function withoutNotes<T extends { NotesMDX: unknown }>(item: T): Omit<T, 
 /**
  * Drops the server-only `MDXContent` component reference from a post entry.
  *
- * Same RSC-serialization issue as `withoutNotes` — bare function refs can't
+ * Same RSC-serialization issue as `withoutNotes`, bare function refs can't
  * cross into a client component. Use this before handing posts to any
  * `'use client'` component (lists, filters, etc.).
  */

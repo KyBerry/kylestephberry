@@ -112,7 +112,7 @@
   /*
     Non-interactive scaled thumbnails (ShowcaseCard previews): the live component
     may contain internal scroll regions whose scrollbars render scaled and ugly
-    on the poster. Hide every scrollbar inside a static preview — it's not
+    on the poster. Hide every scrollbar inside a static preview, it's not
     scrollable there anyway (pointer-events are off).
   */
   .preview-static,

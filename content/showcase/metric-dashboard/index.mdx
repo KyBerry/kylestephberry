@@ -1,23 +1,22 @@
 ---
 title: 'Metric dashboard'
-summary: 'Animated KPI cards with inline sparklines — exploring how motion can make numbers feel alive.'
+summary: 'Animated KPI cards with inline sparklines. A study in when motion actually helps a dashboard.'
 publishedAt: '2026-05-23'
 tags: ['data', 'dashboard', 'motion', 'animation']
 featured: true
 mountStrategy: 'always'
 ---
 
-I built this to answer a question I kept running into while reading about data visualization:
-when does animation on a dashboard *help*, and when does it just distract? My hypothesis going in
-was that animation earns its place when it encodes meaning — and that two specific patterns do
-that well.
+I built this to answer a question I kept running into: when does animation on a dashboard help,
+and when does it just distract? Going in, my take was that animation earns its place when it
+encodes meaning, and two patterns do that well.
 
-The first is count-up on entry. A number that resolves to its value feels like it *landed* —
-it registers differently than a static readout that just appears. The effect is subtle (the
-animation lasts under 800 ms) but it creates a brief moment of attention that helps the value
-stick. The second is sparkline path-draw. Revealing the trend line left to right reinforces the
-temporal reading direction — the eye follows the line through history and arrives at the current
-value, which gives the number context it wouldn't have in isolation.
+The first is count-up on entry. A number that counts up to its value registers differently
+than a static readout that just appears. The effect is subtle (the animation lasts under
+800 ms) but it creates a brief moment of attention that helps the value stick. The second is
+sparkline path-draw. Revealing the trend line left to right follows the way you read time: the
+eye tracks the line through history and lands on the current value, which gives the number
+context it wouldn't have on its own.
 
 The restraint here mattered as much as the animation. Everything runs once on entry, then stops.
 Looping animations on a dashboard create fatigue; a chart that perpetually redraws competes for
@@ -26,6 +25,6 @@ look at for hours without the motion becoming noise.
 
 Accessibility was part of the brief from the start. SVG charts with no text alternative are
 invisible to screen readers. Each sparkline here carries an `aria-label` describing the trend in
-plain language — not just "chart" but "upward trend over 10 periods." Color reinforces direction
+plain language, not just "chart" but "upward trend over 10 periods." Color reinforces direction
 (green for positive, muted red for negative), but it's never the *only* signal: the sparkline
 shape and the explicit percentage label both carry the same meaning independently.

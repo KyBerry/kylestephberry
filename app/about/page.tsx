@@ -86,30 +86,29 @@ export default function AboutPage() {
           About
         </p>
         <h1 className="text-4xl font-medium tracking-[-0.025em] text-balance text-(--color-fg) md:text-5xl">
-          Design engineer at the seam of craft and code
+          I design and build product interfaces
         </h1>
         <p className="mt-4 max-w-prose text-(--color-fg-muted)">
-          I build the interfaces where design decisions become real software — and sweat the
-          details on both sides of that line.
+          Mostly data-dense dashboards, the design systems behind them, and the interaction
+          details in between.
         </p>
       </header>
 
-      {/* Bio — two tight first-person paragraphs, design-engineer framing */}
+      {/* Bio: two tight first-person paragraphs, design-engineer framing */}
       <div className="max-w-[var(--container-prose)] space-y-5 text-lg leading-relaxed text-pretty text-(--color-fg-muted)">
         <p>
-          I&rsquo;m a design engineer based in {site.location}, working at the seam of craft and
-          code. I care most about the product surface itself — data-dense dashboards, design
-          systems, and motion-forward interfaces that stay accessible under real-world complexity.
-          Most recently that&rsquo;s meant building the Accountant Console at Bill and real-time AI
-          streaming interfaces at AirframeAI, and earlier leading frontend and design systems at
-          Truvy.
+          I&rsquo;m a design engineer based in {site.location}. I care most about the things people
+          actually use: data-dense dashboards, design systems, and interfaces that stay accessible
+          when the data gets messy. Lately that&rsquo;s meant building the Accountant Console at
+          BILL and real-time AI streaming interfaces at AirframeAI. Before that I led frontend and
+          design systems at Truvy.
         </p>
         <p>
-          I&rsquo;m also comfortable well past the browser. I&rsquo;ve built GraphQL services and
-          federated APIs, migrated legacy systems to modern architectures, and shipped on cloud
-          infrastructure — range I treat as a way to make better product decisions, not a separate
-          job. I like collaborating closely with designers, mentoring engineers, and closing the gap
-          between a Figma file and what actually ships.
+          I&rsquo;m comfortable well past the browser, too. I&rsquo;ve built GraphQL services and
+          federated APIs, moved legacy systems onto modern architectures, and run my own cloud
+          infrastructure. I don&rsquo;t treat that as a separate job; it just helps me make better
+          product calls. I like working closely with designers, mentoring other engineers, and
+          closing the gap between a Figma file and what actually ships.
         </p>
       </div>
 
@@ -118,7 +117,7 @@ export default function AboutPage() {
         {site.currentFocus}
       </p>
 
-      {/* Skills — grouped, scannable; chips match the WorkTimeline badge idiom */}
+      {/* Skills: grouped, scannable; chips match the WorkTimeline badge idiom */}
       <section className="mt-20 md:mt-24" aria-labelledby="about-skills">
         <h2
           id="about-skills"
@@ -150,7 +149,7 @@ export default function AboutPage() {
         </dl>
       </section>
 
-      {/* Education — institution + credential, font-mono years */}
+      {/* Education: institution + credential, font-mono years */}
       <section className="mt-20 md:mt-24" aria-labelledby="about-education">
         <h2
           id="about-education"

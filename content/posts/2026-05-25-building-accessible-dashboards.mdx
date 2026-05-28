@@ -1,6 +1,6 @@
 ---
 title: 'Three places dashboards fail on accessibility'
-summary: 'Notes from studying a11y in data-dense UIs — the patterns that are easy to miss when a table has thousands of rows.'
+summary: 'Notes from studying a11y in data-dense UIs: the patterns that are easy to miss when a table has thousands of rows.'
 publishedAt: '2026-05-25'
 tags: ['accessibility', 'dashboards', 'engineering']
 featured: true
@@ -17,11 +17,11 @@ These are patterns I keep returning to when building or reviewing data-heavy UIs
 
 ## 1. Color as the only signal
 
-The classic mistake. A red cell means "overdue," a green cell means "paid" — and a user
-with red-green color vision deficiency sees two identical shades. Fix it with a secondary
-signal: an icon, a text prefix, or a strikethrough. The approach I reach for: color as
-reinforcement, with a short text label ("Overdue", "Paid") as the primary semantic carrier.
-Color then enhances, rather than creates, meaning.
+The classic mistake. A red cell means "overdue," a green cell means "paid," and a user
+with red-green color vision deficiency sees two identical shades. Fix it with a second
+signal: an icon, a text prefix, or a strikethrough. What I reach for is a short text
+label ("Overdue", "Paid") that carries the meaning, with color as reinforcement. Color
+enhances the label instead of being the only thing that says it.
 
 ## 2. Charts with no text alternative
 
@@ -32,7 +32,7 @@ just the chart type. Better: provide a summary table as a visually-hidden siblin
 
 ## 3. Virtualized lists that skip the DOM
 
-Virtualization is mandatory at scale — rendering 10,000 rows naively destroys scroll
+Virtualization is mandatory at scale. Rendering 10,000 rows naively destroys scroll
 performance. But virtual lists only mount a window of items, which means screen reader
 users who navigate by "jump to next table row" hit the end of the rendered window and
 stop, even when there are thousands more rows below.
@@ -46,7 +46,7 @@ readers will announce "row 47 of 2,340" instead of "row 47 of 20."
 ## A note on i18n and ARIA labels
 
 Locale formatting and accessible labels are more entangled than they look. A number
-formatted as `1.234,56` in a German locale is `1,234.56` in a US locale — and if you
+formatted as `1.234,56` in a German locale is `1,234.56` in a US locale. If you
 concatenate raw numbers into an `aria-label`, you'll produce nonsense in one of them.
 The fix: always pass display values through `Intl.NumberFormat` and `Intl.DateTimeFormat`
 before they reach the DOM or any aria string. Never concatenate raw number values.
@@ -54,6 +54,6 @@ before they reach the DOM or any aria string. Never concatenate raw number value
 ## The gap I keep noticing
 
 Keyboard-shortcut discoverability. Power users who live in a dashboard build muscle memory
-for shortcuts — but most dashboards never surface those shortcuts anywhere in the UI.
-A simple `?` modal listing available shortcuts (à la GitHub's) is low-effort and
-meaningfully improves the experience for anyone who relies on keyboard navigation.
+for shortcuts, but most dashboards never surface those shortcuts anywhere in the UI.
+A simple `?` modal listing the available shortcuts (like GitHub's) is cheap to build and
+helps anyone who relies on the keyboard.

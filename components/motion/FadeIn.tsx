@@ -4,7 +4,7 @@ import { useCallback, useRef, useState, type ReactNode } from 'react'
 import { cn } from '@/lib/utils/cn'
 
 // Restrained element union (mirrors <Container>'s `as`) rather than full
-// polymorphism — these are the only wrappers grid items actually need.
+// polymorphism, these are the only wrappers grid items actually need.
 type FadeInTag = 'div' | 'li' | 'section' | 'span'
 
 interface FadeInProps {

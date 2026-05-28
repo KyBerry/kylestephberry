@@ -2,9 +2,9 @@ export const site = {
   name: 'Kyle Berry',
   role: 'Design Engineer',
   location: 'Denver, CO',
-  currentFocus: 'Design systems, motion, and accessible product surfaces',
+  currentFocus: 'Design systems, motion, and accessible interfaces',
   shortBio:
-    'Design engineer at the seam of craft and code. I build data-dense product UIs, design systems, and motion-forward interfaces — most recently at Bill and AirframeAI.',
+    'I build data-dense product UIs and design systems, and I care a lot about how they move and feel. Currently at BILL.',
   url: 'https://kylestephberry.com',
   email: 'kylestephberry@gmail.com',
   socials: [

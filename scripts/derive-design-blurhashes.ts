@@ -40,7 +40,7 @@ async function readExistingCache(): Promise<Cache> {
       return parsed as Cache
     }
   } catch {
-    // Missing or malformed cache — start fresh.
+    // Missing or malformed cache, start fresh.
   }
   return {}
 }

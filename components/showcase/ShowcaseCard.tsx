@@ -8,7 +8,7 @@ import { FadeIn } from '@/components/motion/FadeIn'
 import { ScaledStage } from '@/components/showcase/ScaledStage'
 import { useCursorGlow } from '@/lib/motion/useCursorGlow'
 
-// Card consumes only a small slice of the entry — narrowing the prop type
+// Card consumes only a small slice of the entry, narrowing the prop type
 // keeps the boundary clean (omits the server-only NotesMDX function ref).
 type CardEntry = Pick<Showcase, 'url' | 'title' | 'tags' | 'Component'>
 

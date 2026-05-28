@@ -3,7 +3,7 @@ entries:
     role: 'Design Engineer'
     company: 'Independent'
     companyUrl: null
-    context: 'Designing and building product surfaces across web and mobile. Shipping this site.'
+    context: 'Designing and building product interfaces across web and mobile. Shipping this site.'
 
   - years: '2024–2025'
     role: 'Software Engineer'
@@ -14,15 +14,15 @@ entries:
 
   - years: '2022–present'
     role: 'Software Engineer II'
-    company: 'Bill'
+    company: 'BILL'
     companyUrl: 'https://www.bill.com'
-    context: 'Building the Accountant Console — data dashboards, complex visualizations, and a11y/i18n work inside a React + Angular micro-frontend architecture.'
+    context: 'Building the Accountant Console: data dashboards, complex visualizations, and a11y and i18n work in a React and Angular micro-frontend architecture.'
 
   - years: '2020–2022'
     role: 'Lead, Full Stack Developer'
     company: 'Truvy'
     companyUrl: 'https://www.truvy.com'
-    context: 'Led frontend development and design systems for truTransformation — Figma prototyping, design system architecture, e-commerce platform on Nuxt/Vue.'
+    context: 'Led frontend and design systems for truTransformation: Figma prototyping, design-system architecture, and an e-commerce platform on Nuxt and Vue.'
 
   - years: '2019–2020'
     role: 'QA Engineer'

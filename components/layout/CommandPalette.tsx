@@ -13,7 +13,7 @@ interface CommandPaletteProps {
 
 /**
  * Parse pagefind's `<mark>highlight</mark>` excerpts into a React node tree.
- * No HTML injection — splits the raw string into safe text and <mark> elements.
+ * No HTML injection, splits the raw string into safe text and <mark> elements.
  */
 function ExcerptText({ raw }: { raw: string }) {
   const tokens = raw.split(/(<mark>|<\/mark>)/g)
@@ -71,8 +71,8 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
   // Debounced search on query change. Only fires when query is long enough; otherwise
   // render falls through to the short-query branch and any stale `results` are not shown.
-  // setState is only called from inside the timer callback (async) — never synchronously
-  // in the effect body — so this satisfies react-hooks/set-state-in-effect.
+  // setState is only called from inside the timer callback (async), never synchronously
+  // in the effect body, so this satisfies react-hooks/set-state-in-effect.
   useEffect(() => {
     if (!open || queryShort) return
     debounceRef.current = setTimeout(async () => {

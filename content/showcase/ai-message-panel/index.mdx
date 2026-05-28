@@ -7,21 +7,21 @@ featured: true
 mountStrategy: 'on-hover'
 ---
 
-The original `ai-stream` demo explored pacing: how token timing changes the way a generated answer
-feels. This panel takes the same idea one layer closer to product UI. The message has a user prompt,
-a streamed assistant answer, controls for stopping and regenerating, and citations that can expand
-inline without sending the reader away from the answer.
+My earlier `ai-stream` demo was about pacing: how token timing changes the way a generated answer
+feels. This panel takes the same idea one step closer to real product UI. The message has a user
+prompt, a streamed assistant answer, controls for stopping and regenerating, and citations that
+expand inline so the reader doesn't get sent away from the answer.
 
-The important part is that the citation UI is not decorative. Each chip has a marker that matches
-the assistant text, an expanded state, and a short source excerpt. In production that source would
-need a durable document id and a permission check, but the interaction contract is the same: make
-the model's claim traceable at the exact moment the user is deciding whether to trust it.
+The citations aren't decorative. Each chip has a marker that matches the assistant text, an
+expanded state, and a short source excerpt. In production that source would need a durable document
+id and a permission check, but the interaction is the same: you can check the model's claim right
+when you're deciding whether to trust it.
 
-Accessibility shapes the streaming behavior. The answer uses a polite live region so assistive
-technology can announce changes without interrupting the current task. The status label exposes
-whether the response is generating, complete, or stopped, and the controls remain ordinary buttons
-instead of custom divs with click handlers.
+Accessibility shapes the streaming behavior. The answer uses a polite live region so screen readers
+can announce changes without interrupting the current task. The status label says whether the
+response is generating, complete, or stopped, and the controls stay ordinary buttons instead of
+custom divs with click handlers.
 
-Motion is intentionally restrained. The small activity meter and cursor give sighted users a state
+Motion is restrained on purpose. The small activity meter and cursor give sighted users a state
 signal during generation, but `prefers-reduced-motion` removes the pulsing and shortens the token
-delay so the interaction does not become a forced animation.
+delay so it doesn't turn into a forced animation.

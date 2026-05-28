@@ -8,7 +8,7 @@ import { SourcePane } from './SourcePane'
 import { VariantChips } from './VariantChips'
 
 // Frame consumes everything in a Showcase EXCEPT the server-only NotesMDX.
-// Excluding it here keeps the boundary clean — React can serialize client
+// Excluding it here keeps the boundary clean, React can serialize client
 // component module refs (Component, variantComponents) but not server-only
 // function refs.
 type FrameEntry = Omit<Showcase, 'NotesMDX'>
@@ -26,7 +26,7 @@ export function ShowcaseFrame({ entry, className }: ShowcaseFrameProps) {
   const hasVariants = variantNames.length > 0
 
   const [active, setActive] = useState(DEFAULT_KEY)
-  // Initialise from localStorage lazily — avoids the cascading setState-in-effect
+  // Initialise from localStorage lazily, avoids the cascading setState-in-effect
   // pattern that triggers react-hooks/set-state-in-effect.
   const [expanded, setExpanded] = useState<boolean>(() => {
     if (typeof window === 'undefined') return true
@@ -67,11 +67,11 @@ export function ShowcaseFrame({ entry, className }: ShowcaseFrameProps) {
         </div>
       </div>
 
-      {/* Body: preview on top, code below — always stacked */}
+      {/* Body: preview on top, code below, always stacked */}
       <div className="flex flex-col divide-y divide-(--color-border)">
         {/*
           Detail-page preview: render the component at NATURAL size (no scaling)
-          so it's genuinely usable — internal scroll regions (e.g. the
+          so it's genuinely usable, internal scroll regions (e.g. the
           virtualized table's row viewport) work, scrollbars are real, and
           interaction feels 1:1. Tall/wide components scroll within this fixed
           box; short ones center. (Scaling-to-fit is for the index-card poster

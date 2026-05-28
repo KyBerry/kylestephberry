@@ -170,7 +170,7 @@ export default function MetricDashboard() {
         </span>
       </div>
 
-      {/* Hero metric — the focal point: large value + the one sage sparkline */}
+      {/* Hero metric, the focal point: large value + the one sage sparkline */}
       <div className="mt-7">
         <p className="text-sm text-(--color-fg-muted)">{HERO.label}</p>
         <div className="mt-1.5 flex items-baseline gap-2.5">
@@ -180,7 +180,7 @@ export default function MetricDashboard() {
         <Sparkline data={HERO.data} active={active} className="mt-5 h-12 w-full text-(--color-accent)" />
       </div>
 
-      {/* Supporting metrics — restrained, monochrome, no sparklines competing with the hero */}
+      {/* Supporting metrics: restrained, monochrome, no sparklines competing with the hero */}
       <div className="mt-7 grid grid-cols-3 gap-4 border-t border-(--color-border) pt-6">
         {SUPPORTING.map((metric) => (
           <Supporting key={metric.label} metric={metric} active={active} />

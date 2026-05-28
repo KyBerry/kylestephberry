@@ -24,7 +24,7 @@ interface ScaledStageProps {
  * not to the whole box. Scaling tall components down to fully fit makes them
  * illegibly tiny and gives every card a different visual weight. Instead:
  *
- *   - scale = min(availWidth / naturalWidth, maxScale) — the component fills
+ *   - scale = min(availWidth / naturalWidth, maxScale), the component fills
  *     the card width at a readable size; small components upscale modestly.
  *   - if the scaled height fits, center it.
  *   - if it's taller than the card, top-align and fade the cropped bottom edge

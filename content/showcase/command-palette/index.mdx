@@ -1,6 +1,6 @@
 ---
 title: 'Command palette'
-summary: 'A fully accessible ⌘K command palette — exploring the ARIA contract and focus management that most implementations skip.'
+summary: 'A fully accessible ⌘K command palette, built around the ARIA contract and focus management most implementations skip.'
 publishedAt: '2026-05-24'
 tags: ['accessibility', 'interaction', 'keyboard']
 featured: true
@@ -8,17 +8,16 @@ mountStrategy: 'always'
 ---
 
 Command palettes are one of those components that look straightforward until you try to build
-one correctly. The visual part is easy — a modal with a search input and a filtered list. The
+one correctly. The visual part is easy: a modal with a search input and a filtered list. The
 hard part is the accessibility contract, and most implementations I've looked at get at least
 one piece wrong.
 
 The correct ARIA pattern is `role="combobox"` on the input (not `role="searchbox"`),
 `role="listbox"` on the results, `aria-activedescendant` on the input tracking the currently
 focused option, and `aria-selected` on each result item. The `aria-expanded` state on the
-combobox toggles with open/close. This is the spec from the ARIA authoring practices guide —
-it's worth reading once, because the naive implementation (`role="list"` + keyboard listeners)
-produces something that works for sighted keyboard users but is confusing or broken for screen
-reader users.
+combobox toggles with open/close. This is the spec from the ARIA authoring practices guide.
+Read it once, because the naive implementation (`role="list"` + keyboard listeners)
+works for sighted keyboard users but is confusing or broken for screen reader users.
 
 The focus management piece is where I see the most bugs: closing the palette must return focus
 to the element that triggered it. This sounds obvious but requires explicitly saving a ref to
@@ -26,6 +25,6 @@ the trigger and calling `.focus()` on it inside `requestAnimationFrame` after th
 unmounts. Skipping the rAF causes a race in some browsers where the focus call fires before
 the DOM has settled.
 
-The open/close animation is a short opacity + scale-in. The intent is to reinforce the *speed*
-of the interaction — this is a power-user tool, and the animation should feel fast, not
-theatrical. On `prefers-reduced-motion`, both transitions reduce to a plain opacity fade.
+The open/close animation is a short opacity and scale-in, just enough to reinforce how fast the
+interaction is. This is a keyboard-driven tool, so the animation should feel quick, not flashy. On
+`prefers-reduced-motion`, both transitions reduce to a plain opacity fade.

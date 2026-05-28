@@ -10,8 +10,8 @@ const RESPONSE_TOKENS = (
   'The cost is real: every boundary adds a network round-trip, a separate JavaScript bundle, ' +
   'and a shared-state contract that can drift. ' +
   'Consistent design systems become hard to enforce when each team ships its own component library. ' +
-  'The pattern pays off at scale where deployment independence outweighs the integration tax — ' +
-  'below that threshold, a well-structured monorepo is almost always simpler.'
+  'The pattern pays off at scale where deployment independence outweighs the integration tax. ' +
+  'Below that threshold, a well-structured monorepo is almost always simpler.'
 ).split(/(?<=\s)|(?=\s)/).filter(Boolean)
 
 function jitter(token: string): number {

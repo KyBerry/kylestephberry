@@ -6,7 +6,7 @@ import type { Showcase } from 'content-collections'
 import { TagChips } from '@/components/ui/TagChips'
 import { ShowcaseCard } from './ShowcaseCard'
 
-// Strip the server-only MDX component reference at the boundary — the filter
+// Strip the server-only MDX component reference at the boundary, the filter
 // only needs tag + display data.
 type FilterEntry = Omit<Showcase, 'NotesMDX'>
 

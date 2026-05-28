@@ -13,7 +13,7 @@ export function getHighlighter(): Promise<Highlighter> {
   return highlighterPromise
 }
 
-/** HTML-string flavour — still used by older callers if needed. */
+/** HTML-string flavour, still used by older callers if needed. */
 export async function highlightCode(code: string, lang = 'tsx'): Promise<string> {
   const hl = await getHighlighter()
   return hl.codeToHtml(code, { lang, theme: 'vesper' })

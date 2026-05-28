@@ -23,7 +23,7 @@ let runtime: PagefindRuntime | null = null
 
 export async function getPagefind(): Promise<PagefindRuntime> {
   if (runtime) return runtime
-  // The path is resolved by the browser at runtime — webpack/turbopack should NOT try to bundle it.
+  // The path is resolved by the browser at runtime, webpack/turbopack should NOT try to bundle it.
   // Using a runtime-computed string defeats build-time analysis.
   const path = '/_pagefind/pagefind.js'
   const mod = (await import(/* webpackIgnore: true */ /* @vite-ignore */ path)) as PagefindRuntime

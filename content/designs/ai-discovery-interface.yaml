@@ -1,7 +1,7 @@
 title: AI Discovery Interface
-summary: A personal prototype exploring search and discovery UX for AI-powered tools — streaming responses, result cards, and conversational query patterns.
+summary: A personal prototype for search and discovery in AI tools, covering streaming responses, result cards, and conversational queries.
 image: /designs/ai-discovery-interface.png
-imageAlt: AI discovery interface prototype — search, streaming results, and query patterns
+imageAlt: AI discovery interface prototype with search, streaming results, and query patterns
 imageWidth: 1280
 imageHeight: 800
 figmaUrl: null

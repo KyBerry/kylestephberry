@@ -7,7 +7,7 @@ import { latest } from '@/lib/content/helpers'
 
 export const metadata: Metadata = {
   title: 'Designs',
-  description: 'Selected Figma work — explorations, product surfaces, interface studies.',
+  description: 'Personal Figma explorations and interface studies.',
 }
 
 export default function DesignsIndexPage() {
@@ -23,8 +23,8 @@ export default function DesignsIndexPage() {
           Figma work
         </h1>
         <p className="mt-4 max-w-prose text-(--color-fg-muted)">
-          Selected explorations and product surfaces. Click a tile to open at native size; use the
-          arrow keys to step through the set.
+          Personal explorations and interface studies. Click a tile to open it at full size, or use
+          the arrow keys to step through.
         </p>
       </header>
 

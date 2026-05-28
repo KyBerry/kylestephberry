@@ -64,7 +64,7 @@ heroAlt: string | null
 Available MDX components (auto-registered):
 
 - `<Callout type="note|warn|tip">`
-- `<Showcase slug="hello-button" />` — embeds a showcase entry inline
+- `<Showcase slug="hello-button" />` embeds a showcase entry inline
 - `<Image src alt width height caption />`
 - `<Video src caption />`
 - `<Figma url height />`
@@ -97,7 +97,7 @@ YAML shape: `title`, `summary?`, `image`, `imageAlt`, `imageWidth`, `imageHeight
 
 ## Layout & theme
 
-- Theme tokens live in `app/globals.css` inside the `@theme` block — OKLCH warm-neutral palette plus a single sage accent.
+- Theme tokens live in `app/globals.css` inside the `@theme` block, an OKLCH warm-neutral palette plus a single sage accent.
 - Container widths come from `--container-prose|grid|hero` tokens; use `<Container variant=…>`.
 - The shared `.prose-portfolio` class styles MDX body content (used by both showcase notes and blog posts).
 

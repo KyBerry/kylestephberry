@@ -226,7 +226,7 @@ export default function I18nFormattingPlayground() {
         </div>
       </div>
 
-      {/* Live formatted preview — re-renders in the selected locale + direction */}
+      {/* Live formatted preview: re-renders in the selected locale + direction */}
       <div
         dir={locale.direction}
         aria-live="polite"

@@ -13,7 +13,7 @@ interface SourcePaneProps {
   sourceText: string
   sourceHast: SerializableHast
   className?: string
-  /** When false, the source body is hidden (collapsed) — header stays visible. */
+  /** When false, the source body is hidden (collapsed), header stays visible. */
   expanded?: boolean
   onToggle?: () => void
 }
@@ -48,7 +48,7 @@ export function SourcePane({
       await navigator.clipboard.writeText(sourceText)
       setCopied(true)
     } catch {
-      // clipboard unavailable — silently fail
+      // clipboard unavailable, silently fail
     }
   }
 

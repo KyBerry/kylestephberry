@@ -7,7 +7,7 @@ import { getHighlighter } from './shiki'
  * The real `hast.Root` includes optional `position` and `data` fields whose
  * types (`Position | undefined`, etc.) are not assignable to
  * content-collections' `SchemaType` (which is `Literal | object | array`).
- * We declare our own shape — at runtime we strip those fields from Shiki's
+ * We declare our own shape, at runtime we strip those fields from Shiki's
  * output before returning, so the cached JSON matches.
  *
  * The shape is wide enough that `hast-util-to-jsx-runtime` accepts it via a
@@ -69,7 +69,7 @@ function stripNode(node: RootContent | ElementContent): SerializableHastChild {
   if (node.type === 'doctype') {
     return { type: 'doctype' }
   }
-  // Fallback — should not occur for Shiki output.
+  // Fallback, should not occur for Shiki output.
   return { type: 'text', value: '' }
 }
 
@@ -97,6 +97,6 @@ function cleanValue(v: unknown): HastPropertyValue | undefined {
     }
     return arr
   }
-  // Drop anything else (objects, functions, symbols) — Shiki shouldn't emit them.
+  // Drop anything else (objects, functions, symbols), Shiki shouldn't emit them.
   return undefined
 }
