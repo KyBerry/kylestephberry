@@ -5,16 +5,13 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import type { Post } from 'content-collections'
 import Link from 'next/link'
 import { TagChips } from '@/components/ui/TagChips'
+import { formatDate } from '@/lib/utils/format-date'
 
 // Posts crossing into the client need MDXContent (a bare function ref) stripped.
 type PostListItem = Omit<Post, 'MDXContent'>
 
 interface PostsByYearProps {
   posts: PostListItem[]
-}
-
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
 export function PostsByYear({ posts }: PostsByYearProps) {
@@ -77,7 +74,7 @@ export function PostsByYear({ posts }: PostsByYearProps) {
                       className="group grid grid-cols-[80px_1fr] items-baseline gap-x-6 gap-y-1 py-4 transition-colors hover:bg-(--color-surface) sm:grid-cols-[100px_1fr]"
                     >
                       <span className="font-mono text-xs text-(--color-fg-subtle)">
-                        {formatDate(post.publishedAt)}
+                        {formatDate(post.publishedAt, { year: false })}
                       </span>
                       <div className="min-w-0">
                         <p className="text-base font-medium text-(--color-fg) transition-colors group-hover:text-(--color-accent)">

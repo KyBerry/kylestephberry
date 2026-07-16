@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import type { Post } from 'content-collections'
 import { cn } from '@/lib/utils/cn'
+import { formatDate } from '@/lib/utils/format-date'
 import { FadeIn } from '@/components/motion/FadeIn'
 
 // Keep the cascade short so late cards aren't held invisible (see ShowcaseCard).
@@ -12,11 +13,6 @@ interface PostCardProps {
   /** Position in its grid; drives the fade-in stagger. */
   index?: number
   className?: string
-}
-
-function formatDate(iso: string): string {
-  const date = new Date(iso)
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
 export function PostCard({ post, index = 0, className }: PostCardProps) {

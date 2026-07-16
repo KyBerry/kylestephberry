@@ -1,18 +1,11 @@
 import { cn } from '@/lib/utils/cn'
+import { formatDate } from '@/lib/utils/format-date'
 
 interface PostMetaProps {
   publishedAt: string
   readingTime: string
   tags: string[]
   className?: string
-}
-
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
 }
 
 export function PostMeta({ publishedAt, readingTime, tags, className }: PostMetaProps) {

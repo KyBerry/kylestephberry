@@ -7,6 +7,7 @@ import { Container } from '@/components/ui/Container'
 import { ShowcaseCard } from '@/components/showcase/ShowcaseCard'
 import { ShowcaseFrame } from '@/components/showcase/ShowcaseFrame'
 import { related, withoutNotes } from '@/lib/content/helpers'
+import { formatDate } from '@/lib/utils/format-date'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -24,14 +25,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: entry.title,
     description: entry.summary,
   }
-}
-
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
 }
 
 export default async function ShowcaseDetailPage({ params }: PageProps) {
