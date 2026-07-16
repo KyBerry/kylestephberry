@@ -1,21 +1,37 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 
 const COUNT_MS = 1100
 const DRAW_MS = 900
+
+const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)'
+
+function subscribeToMotionPreference(onStoreChange: () => void): () => void {
+  const media = window.matchMedia(REDUCED_MOTION_QUERY)
+  media.addEventListener('change', onStoreChange)
+  return () => media.removeEventListener('change', onStoreChange)
+}
+
+function usePrefersReducedMotion(): boolean {
+  return useSyncExternalStore(
+    subscribeToMotionPreference,
+    () => window.matchMedia(REDUCED_MOTION_QUERY).matches,
+    () => false,
+  )
+}
 
 function easeOutQuart(t: number): number {
   return 1 - Math.pow(1 - t, 4)
 }
 
 /** Animated count-up; returns a formatted string (locale-grouped or fixed-decimal). */
-function useCountUp(target: number, active: boolean, decimals = 0): string {
+function useCountUp(target: number, active: boolean, decimals = 0, reducedMotion = false): string {
   const [value, setValue] = useState(0)
   const rafRef = useRef<number | null>(null)
 
   useEffect(() => {
-    if (!active) return
+    if (!active || reducedMotion) return
     const start = performance.now()
     const tick = (now: number) => {
       const progress = Math.min((now - start) / COUNT_MS, 1)
@@ -26,9 +42,11 @@ function useCountUp(target: number, active: boolean, decimals = 0): string {
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
     }
-  }, [target, active])
+  }, [target, active, reducedMotion])
 
-  return decimals > 0 ? value.toFixed(decimals) : Math.round(value).toLocaleString()
+  // Reduced motion skips the animation entirely: render the final value.
+  const shown = reducedMotion && active ? target : value
+  return decimals > 0 ? shown.toFixed(decimals) : Math.round(shown).toLocaleString()
 }
 
 function sparkPath(data: number[], w: number, h: number): string {
@@ -50,10 +68,12 @@ function sparkPath(data: number[], w: number, h: number): string {
 function Sparkline({
   data,
   active,
+  reducedMotion,
   className,
 }: {
   data: number[]
   active: boolean
+  reducedMotion: boolean
   className?: string
 }) {
   const W = 400
@@ -89,11 +109,17 @@ function Sparkline({
         strokeLinecap="round"
         strokeLinejoin="round"
         vectorEffect="non-scaling-stroke"
-        style={{
-          strokeDasharray: len || undefined,
-          strokeDashoffset: drawn ? 0 : len,
-          transition: drawn ? `stroke-dashoffset ${DRAW_MS}ms cubic-bezier(0.16, 1, 0.3, 1)` : 'none',
-        }}
+        style={
+          reducedMotion
+            ? undefined
+            : {
+                strokeDasharray: len || undefined,
+                strokeDashoffset: drawn ? 0 : len,
+                transition: drawn
+                  ? `stroke-dashoffset ${DRAW_MS}ms cubic-bezier(0.16, 1, 0.3, 1)`
+                  : 'none',
+              }
+        }
       />
     </svg>
   )
@@ -120,8 +146,16 @@ const SUPPORTING: SupportingMetric[] = [
   { label: 'Pages / visit', value: 4.2, decimals: 1, suffix: '', delta: '+9%' },
 ]
 
-function Supporting({ metric, active }: { metric: SupportingMetric; active: boolean }) {
-  const value = useCountUp(metric.value, active, metric.decimals)
+function Supporting({
+  metric,
+  active,
+  reducedMotion,
+}: {
+  metric: SupportingMetric
+  active: boolean
+  reducedMotion: boolean
+}) {
+  const value = useCountUp(metric.value, active, metric.decimals, reducedMotion)
   return (
     <div className="flex flex-col gap-1.5">
       <span className="text-[11px] text-(--color-fg-subtle)">{metric.label}</span>
@@ -137,7 +171,8 @@ function Supporting({ metric, active }: { metric: SupportingMetric; active: bool
 export default function MetricDashboard() {
   const [active, setActive] = useState(false)
   const containerRef = useRef<HTMLDivElement | null>(null)
-  const heroValue = useCountUp(HERO.value, active)
+  const reducedMotion = usePrefersReducedMotion()
+  const heroValue = useCountUp(HERO.value, active, 0, reducedMotion)
 
   useEffect(() => {
     const el = containerRef.current
@@ -158,7 +193,7 @@ export default function MetricDashboard() {
   return (
     <div
       ref={containerRef}
-      className="mx-auto w-full max-w-md rounded-(--radius-card) border border-(--color-border) bg-(--color-surface) p-6"
+      className="mx-auto w-md max-w-full rounded-(--radius-card) border border-(--color-border) bg-(--color-surface) p-6"
     >
       <div className="flex items-center justify-between">
         <span className="font-mono text-[10px] tracking-[0.18em] text-(--color-fg-subtle) uppercase">
@@ -177,13 +212,23 @@ export default function MetricDashboard() {
           <span className="text-4xl font-semibold text-(--color-fg) tabular-nums">{heroValue}</span>
           <span className="text-sm text-(--color-fg-subtle) tabular-nums">{HERO.delta}</span>
         </div>
-        <Sparkline data={HERO.data} active={active} className="mt-5 h-12 w-full text-(--color-accent)" />
+        <Sparkline
+          data={HERO.data}
+          active={active}
+          reducedMotion={reducedMotion}
+          className="mt-5 h-12 w-full text-(--color-accent)"
+        />
       </div>
 
       {/* Supporting metrics: restrained, monochrome, no sparklines competing with the hero */}
       <div className="mt-7 grid grid-cols-3 gap-4 border-t border-(--color-border) pt-6">
         {SUPPORTING.map((metric) => (
-          <Supporting key={metric.label} metric={metric} active={active} />
+          <Supporting
+            key={metric.label}
+            metric={metric}
+            active={active}
+            reducedMotion={reducedMotion}
+          />
         ))}
       </div>
     </div>

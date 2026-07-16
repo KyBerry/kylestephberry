@@ -230,8 +230,18 @@ export default function VirtualizedTable() {
   const startIndex = Math.max(0, Math.floor(scrollTop / ROW_HEIGHT) - OVERSCAN)
   const visibleCount = Math.ceil(VIEWPORT_HEIGHT / ROW_HEIGHT) + OVERSCAN * 2
   const endIndex = Math.min(sortedRows.length, startIndex + visibleCount)
-  const visibleRows = sortedRows.slice(startIndex, endIndex)
   const totalHeight = sortedRows.length * ROW_HEIGHT
+
+  // The active row stays mounted even when scrolled out of the window:
+  // aria-activedescendant must always point at a real element, or screen
+  // readers lose their place the moment the row virtualizes away.
+  const renderRows = sortedRows
+    .slice(startIndex, endIndex)
+    .map((row, offset) => ({ row, index: startIndex + offset }))
+  const activeRow = sortedRows[activeIndex]
+  if (activeRow && (activeIndex < startIndex || activeIndex >= endIndex)) {
+    renderRows.push({ row: activeRow, index: activeIndex })
+  }
 
   function scrollRowIntoView(index: number) {
     const viewport = scrollRef.current
@@ -304,7 +314,7 @@ export default function VirtualizedTable() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-col gap-3 text-sm">
+    <div className="mx-auto flex w-3xl max-w-full flex-col gap-3 text-sm">
       <style>{`
         @media (prefers-reduced-motion: no-preference) {
           .virtual-row { transition: background-color 120ms ease; }
@@ -317,7 +327,7 @@ export default function VirtualizedTable() {
             Accounts dataset
           </p>
           <p className="mt-1 text-xs text-(--color-fg-muted)">
-            Showing {visibleRows.length} rendered rows from {sortedRows.length} records.
+            Showing {renderRows.length} rendered rows from {sortedRows.length} records.
           </p>
         </div>
         <div className="rounded-full border border-(--color-border) bg-(--color-surface) px-3 py-1 font-mono text-[10px] text-(--color-fg-subtle)">
@@ -360,8 +370,7 @@ export default function VirtualizedTable() {
           style={{ height: VIEWPORT_HEIGHT }}
         >
           <div className="relative" style={{ height: totalHeight }}>
-            {visibleRows.map((row, visibleIndex) => {
-              const rowIndex = startIndex + visibleIndex
+            {renderRows.map(({ row, index: rowIndex }) => {
               const isActive = row.id === activeRowId
               const isSelected = row.id === selectedRowId
 

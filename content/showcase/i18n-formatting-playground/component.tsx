@@ -103,6 +103,8 @@ const COPY = {
   },
 } as const satisfies Record<LocaleKey, LocaleCopy>
 
+const REVIEWER_MIN = 0
+const REVIEWER_MAX = 12
 const SAMPLE_AMOUNT = 128430.75
 const SAMPLE_USERS = 1289400
 const SAMPLE_DATE = new Date('2026-05-28T16:30:00Z')
@@ -177,7 +179,7 @@ export default function I18nFormattingPlayground() {
   const preview = useMemo(() => formatPreview(locale, reviewerCount), [locale, reviewerCount])
 
   return (
-    <div className="mx-auto flex w-full max-w-md flex-col gap-4 text-sm">
+    <div className="mx-auto flex w-md max-w-full flex-col gap-4 text-sm">
       {/* Controls: locale select + reviewer stepper, one compact row */}
       <div className="flex items-end gap-3 rounded-(--radius-card) border border-(--color-border) bg-(--color-surface) p-3">
         <div className="min-w-0 flex-1">
@@ -208,8 +210,9 @@ export default function I18nFormattingPlayground() {
           <div className="flex items-center gap-1">
             <button
               type="button"
-              onClick={() => setReviewerCount((count) => Math.max(0, count - 1))}
-              className="size-8 rounded-md border border-(--color-border) text-(--color-fg-muted) transition-colors hover:text-(--color-fg)"
+              onClick={() => setReviewerCount((count) => Math.max(REVIEWER_MIN, count - 1))}
+              disabled={reviewerCount === REVIEWER_MIN}
+              className="size-8 rounded-md border border-(--color-border) text-(--color-fg-muted) transition-colors enabled:hover:text-(--color-fg) disabled:opacity-40"
               aria-label="Decrease reviewer count"
             >
               −
@@ -219,8 +222,9 @@ export default function I18nFormattingPlayground() {
             </span>
             <button
               type="button"
-              onClick={() => setReviewerCount((count) => Math.min(12, count + 1))}
-              className="size-8 rounded-md border border-(--color-border) text-(--color-fg-muted) transition-colors hover:text-(--color-fg)"
+              onClick={() => setReviewerCount((count) => Math.min(REVIEWER_MAX, count + 1))}
+              disabled={reviewerCount === REVIEWER_MAX}
+              className="size-8 rounded-md border border-(--color-border) text-(--color-fg-muted) transition-colors enabled:hover:text-(--color-fg) disabled:opacity-40"
               aria-label="Increase reviewer count"
             >
               +

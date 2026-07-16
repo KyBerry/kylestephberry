@@ -25,6 +25,7 @@ const COMMANDS: Command[] = [
 export default function CommandPalette() {
   const [query, setQuery] = useState('')
   const [activeIndex, setActiveIndex] = useState(0)
+  const [lastRan, setLastRan] = useState<Command | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const listboxId = useId()
 
@@ -44,6 +45,15 @@ export default function CommandPalette() {
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
+  // A real palette would dispatch the action here; the demo confirms the
+  // selection in the footer and keeps focus in the input for the next command.
+  const run = (cmd: Command) => {
+    setLastRan(cmd)
+    setQuery('')
+    setActiveIndex(0)
+    inputRef.current?.focus()
+  }
+
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault()
@@ -53,6 +63,8 @@ export default function CommandPalette() {
       setActiveIndex((i) => Math.max(i - 1, 0))
     } else if (e.key === 'Enter') {
       e.preventDefault()
+      const cmd = filtered[activeIndex]
+      if (cmd) run(cmd)
     } else if (e.key === 'Escape') {
       e.preventDefault()
       setQuery('')
@@ -67,7 +79,7 @@ export default function CommandPalette() {
       role="dialog"
       aria-label="Command palette"
       onKeyDown={onKeyDown}
-      className="mx-auto w-full max-w-md overflow-hidden rounded-(--radius-card) border border-(--color-border-strong) bg-(--color-surface)"
+      className="mx-auto w-md max-w-full overflow-hidden rounded-(--radius-card) border border-(--color-border-strong) bg-(--color-surface)"
     >
       <div className="flex items-center gap-3 border-b border-(--color-border) px-4 py-3">
         <input
@@ -110,6 +122,8 @@ export default function CommandPalette() {
               role="option"
               aria-selected={i === activeIndex}
               onMouseEnter={() => setActiveIndex(i)}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => run(cmd)}
               className={`flex cursor-default items-center justify-between gap-4 px-4 py-2.5 text-sm ${
                 i === activeIndex
                   ? 'bg-(--color-surface-hover) text-(--color-fg)'
@@ -132,8 +146,11 @@ export default function CommandPalette() {
         )}
       </ul>
 
-      <div className="border-t border-(--color-border) px-4 py-2">
-        <span className="font-mono text-[10px] text-(--color-fg-subtle)">
+      <div className="flex items-center justify-between gap-4 border-t border-(--color-border) px-4 py-2">
+        <span aria-live="polite" className="truncate font-mono text-[10px] text-(--color-accent)">
+          {lastRan ? `Ran: ${lastRan.label}` : ''}
+        </span>
+        <span className="shrink-0 font-mono text-[10px] text-(--color-fg-subtle)">
           ↑↓ navigate · ↵ select · ⌘K focus
         </span>
       </div>

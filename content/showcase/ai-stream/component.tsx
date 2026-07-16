@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useSyncExternalStore } from 'react'
 
 const PROMPT = 'Explain the tradeoffs of micro-frontend architecture'
 
@@ -14,6 +14,24 @@ const RESPONSE_TOKENS = (
   'Below that threshold, a well-structured monorepo is almost always simpler.'
 ).split(/(?<=\s)|(?=\s)/).filter(Boolean)
 
+const FULL_RESPONSE = RESPONSE_TOKENS.join('')
+
+const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)'
+
+function subscribeToMotionPreference(onStoreChange: () => void): () => void {
+  const media = window.matchMedia(REDUCED_MOTION_QUERY)
+  media.addEventListener('change', onStoreChange)
+  return () => media.removeEventListener('change', onStoreChange)
+}
+
+function usePrefersReducedMotion(): boolean {
+  return useSyncExternalStore(
+    subscribeToMotionPreference,
+    () => window.matchMedia(REDUCED_MOTION_QUERY).matches,
+    () => false,
+  )
+}
+
 function jitter(token: string): number {
   const base = 30 + Math.random() * 50
   const isPunctuation = /[.,!?;:]$/.test(token.trim())
@@ -25,27 +43,15 @@ type Status = 'idle' | 'streaming' | 'done'
 export default function AiStreamComponent() {
   const [status, setStatus] = useState<Status>('idle')
   const [displayed, setDisplayed] = useState('')
-  const [cursorVisible, setCursorVisible] = useState(false)
+  const reducedMotion = usePrefersReducedMotion()
   const outputRef = useRef<HTMLDivElement>(null)
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const cursorIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const indexRef = useRef(0)
   // Use a ref to hold the recursive scheduler so useCallback deps stay stable.
   const schedulerRef = useRef<(() => void) | null>(null)
 
   const clearTimers = useCallback(() => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    if (cursorIntervalRef.current) clearInterval(cursorIntervalRef.current)
-  }, [])
-
-  const stopCursorBlink = useCallback(() => {
-    if (cursorIntervalRef.current) clearInterval(cursorIntervalRef.current)
-    setCursorVisible(false)
-  }, [])
-
-  const startCursorBlink = useCallback(() => {
-    setCursorVisible(true)
-    cursorIntervalRef.current = setInterval(() => setCursorVisible((v) => !v), 530)
   }, [])
 
   // Build the scheduler and store in ref to avoid circular useCallback deps.
@@ -54,7 +60,6 @@ export default function AiStreamComponent() {
       const i = indexRef.current
       const token = RESPONSE_TOKENS[i]
       if (i >= RESPONSE_TOKENS.length || token === undefined) {
-        stopCursorBlink()
         setStatus('done')
         return
       }
@@ -64,23 +69,27 @@ export default function AiStreamComponent() {
         schedulerRef.current?.()
       }, jitter(token))
     }
-  }, [stopCursorBlink])
+  }, [])
 
   const handleStream = useCallback(() => {
     if (status === 'streaming') return
     clearTimers()
+    if (reducedMotion) {
+      indexRef.current = RESPONSE_TOKENS.length
+      setDisplayed(FULL_RESPONSE)
+      setStatus('done')
+      return
+    }
     setDisplayed('')
     indexRef.current = 0
     setStatus('streaming')
-    startCursorBlink()
     schedulerRef.current?.()
-  }, [status, clearTimers, startCursorBlink])
+  }, [status, clearTimers, reducedMotion])
 
   const handleReset = useCallback(() => {
     clearTimers()
     setDisplayed('')
     indexRef.current = 0
-    setCursorVisible(false)
     setStatus('idle')
   }, [clearTimers])
 
@@ -93,7 +102,17 @@ export default function AiStreamComponent() {
   useEffect(() => () => clearTimers(), [clearTimers])
 
   return (
-    <div className="flex w-full max-w-lg flex-col overflow-hidden rounded-(--radius-card) border border-(--color-border) bg-(--color-surface) font-mono text-sm">
+    <div className="flex w-lg max-w-full flex-col overflow-hidden rounded-(--radius-card) border border-(--color-border) bg-(--color-surface) font-mono text-sm">
+      <style>{`
+        @keyframes ai-stream-blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
+        }
+        .ai-stream-cursor { animation: ai-stream-blink 1060ms steps(1) infinite; }
+        @media (prefers-reduced-motion: reduce) {
+          .ai-stream-cursor { animation: none; }
+        }
+      `}</style>
       <div className="flex items-center gap-2.5 px-5 py-4">
         <span className="select-none text-(--color-fg-subtle)">{'>'}</span>
         <span className="flex-1 truncate text-(--color-fg-muted)">{PROMPT}</span>
@@ -121,11 +140,7 @@ export default function AiStreamComponent() {
         >
           <span>{displayed}</span>
           {status === 'streaming' && (
-            <span
-              aria-hidden="true"
-              className="text-(--color-accent)"
-              style={{ opacity: cursorVisible ? 1 : 0, transition: 'opacity 80ms ease' }}
-            >
+            <span aria-hidden="true" className="ai-stream-cursor text-(--color-accent)">
               |
             </span>
           )}

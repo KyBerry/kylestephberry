@@ -131,7 +131,7 @@ export default function AiMessagePanel() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-md overflow-hidden rounded-(--radius-card) border border-(--color-border) bg-(--color-surface) text-sm">
+    <div className="mx-auto w-md max-w-full overflow-hidden rounded-(--radius-card) border border-(--color-border) bg-(--color-surface) text-sm">
       <style>{`
         @keyframes ai-cursor-blink {
           0%, 100% { opacity: 1; }

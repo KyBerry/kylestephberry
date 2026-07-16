@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useId, useRef, useState } from 'react'
 
 type Tab = 'color' | 'typography' | 'space'
 
@@ -119,21 +119,57 @@ function SpaceTab() {
 export default function TokenExplorer() {
   const [activeTab, setActiveTab] = useState<Tab>('color')
   const [copied, setCopied] = useState<string | null>(null)
+  const baseId = useId()
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([])
+  const copyTimer = useRef(0)
 
   function copyToClipboard(value: string) {
-    navigator.clipboard.writeText(value).catch(() => {})
-    setCopied(value)
-    setTimeout(() => setCopied(null), 1400)
+    // Confirm only after the write succeeds; a denied clipboard shows nothing.
+    void navigator.clipboard
+      .writeText(value)
+      .then(() => {
+        setCopied(value)
+        window.clearTimeout(copyTimer.current)
+        copyTimer.current = window.setTimeout(() => setCopied(null), 1400)
+      })
+      .catch(() => {})
+  }
+
+  // Roving tabindex: arrows move focus AND selection (automatic activation).
+  function onTabKeyDown(e: React.KeyboardEvent, index: number) {
+    let next: number | null = null
+    if (e.key === 'ArrowRight') next = (index + 1) % TABS.length
+    else if (e.key === 'ArrowLeft') next = (index - 1 + TABS.length) % TABS.length
+    else if (e.key === 'Home') next = 0
+    else if (e.key === 'End') next = TABS.length - 1
+    const tab = next === null ? undefined : TABS[next]
+    if (next === null || !tab) return
+    e.preventDefault()
+    setActiveTab(tab)
+    tabRefs.current[next]?.focus()
   }
 
   return (
-    <div className="mx-auto w-full max-w-lg font-mono text-sm">
-      <div className="mb-5 flex gap-0 border-b border-(--color-border)">
-        {TABS.map((tab) => (
+    <div className="mx-auto w-lg max-w-full font-mono text-sm">
+      <div
+        role="tablist"
+        aria-label="Design tokens"
+        className="mb-5 flex gap-0 border-b border-(--color-border)"
+      >
+        {TABS.map((tab, index) => (
           <button
             key={tab}
+            ref={(el) => {
+              tabRefs.current[index] = el
+            }}
             type="button"
+            role="tab"
+            id={`${baseId}-tab-${tab}`}
+            aria-selected={activeTab === tab}
+            aria-controls={`${baseId}-panel`}
+            tabIndex={activeTab === tab ? 0 : -1}
             onClick={() => setActiveTab(tab)}
+            onKeyDown={(e) => onTabKeyDown(e, index)}
             className={`relative px-4 py-2 text-xs font-medium capitalize transition-colors ${
               activeTab === tab ? 'text-(--color-fg)' : 'text-(--color-fg-muted)'
             }`}
@@ -146,9 +182,16 @@ export default function TokenExplorer() {
         ))}
       </div>
 
-      {activeTab === 'color' && <ColorTab copied={copied} onCopy={copyToClipboard} />}
-      {activeTab === 'typography' && <TypeTab />}
-      {activeTab === 'space' && <SpaceTab />}
+      <div
+        role="tabpanel"
+        id={`${baseId}-panel`}
+        aria-labelledby={`${baseId}-tab-${activeTab}`}
+        tabIndex={0}
+      >
+        {activeTab === 'color' && <ColorTab copied={copied} onCopy={copyToClipboard} />}
+        {activeTab === 'typography' && <TypeTab />}
+        {activeTab === 'space' && <SpaceTab />}
+      </div>
     </div>
   )
 }
