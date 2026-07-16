@@ -1,0 +1,38 @@
+---
+title: 'Toast queue'
+summary: 'A notification stack with pause-on-hover timers, a visible cap with a real queue, and live-region semantics that do not shout.'
+publishedAt: '2026-06-14'
+tags: ['accessibility', 'motion', 'interaction']
+featured: true
+mountStrategy: 'always'
+---
+
+Toasts look like the easiest component in the kit: a div that appears and then disappears.
+Every hard part is in the "and then disappears."
+
+The first hard part is the timer. A toast that dismisses itself after five seconds is fine
+until the user moves their pointer toward it, at which point taking it away is hostile. This
+implementation pauses every countdown while the pointer or keyboard focus is anywhere inside
+the stack, and the thin progress bar makes the pause visible instead of mysterious. Hover a
+toast and watch the bar stop.
+
+The second hard part is volume. Spam the buttons and you will not get eight overlapping
+toasts: the stack caps at three visible, and everything past that waits in a queue that
+promotes as slots free up. A "+N queued" readout keeps the overflow honest. Dropping
+notifications silently is the worst option, and stacking twelve of them is barely better.
+
+The third hard part is announcement. The container is a labeled region, each toast renders
+with `role="status"`, and errors upgrade to `role="alert"`. That maps to polite and assertive
+live regions respectively: a saved draft should wait its turn, a failed sync should interrupt.
+The colored dot is never the only signal, since each toast also carries a visually hidden
+kind label ("Success:", "Error:") so the semantics survive without the color.
+
+Motion is deliberately small. Enter is a 200ms rise with a slight scale, exit is a short fade,
+and both collapse to instant swaps under `prefers-reduced-motion`. Notifications are
+peripheral by definition, and peripheral vision is exactly where large motion is most
+distracting.
+
+The dismiss flow has one subtlety worth copying: dismissing marks the toast as leaving and
+lets the exit transition play before removal, and queue promotion happens only after the slot
+is actually empty. Removing the element immediately and animating a ghost is the common
+shortcut, and it is why so many toast stacks flicker when one dismisses mid-pile.

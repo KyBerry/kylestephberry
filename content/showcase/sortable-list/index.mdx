@@ -1,0 +1,38 @@
+---
+title: 'Sortable list'
+summary: 'Drag-to-reorder where the keyboard is a first-class citizen: grab, move, drop, and cancel, with every move announced.'
+publishedAt: '2026-07-09'
+tags: ['accessibility', 'keyboard', 'motion']
+featured: true
+mountStrategy: 'always'
+---
+
+Almost every drag-and-drop demo on the internet has the same asterisk: mouse only. The drag
+part is genuinely fun to build, so that is where the effort goes, and the keyboard path gets
+a TODO. I wanted to build one where the keyboard path is not a fallback but a complete,
+pleasant interaction of its own.
+
+The keyboard model follows the pattern screen reader users already know from apps that do
+this well: focus a row's handle, press Space to grab it, move it with the arrow keys, press
+Space again to drop, or Escape to put everything back the way it was. Escape matters more
+than it looks. A grab snapshots the current order, so cancelling is a true undo rather than
+"stop wherever you happen to be." The handle's `aria-pressed` state reflects grabbed-ness,
+and instructions are attached with `aria-describedby` so they are discoverable without being
+repeated on every row.
+
+Announcements are the other half of the keyboard story. A visually hidden `aria-live` region
+narrates each state change: "Grabbed, position 2 of 5," "position 3 of 5," "Dropped." Without
+this, a non-visual user pressing arrow keys gets silence, and silence reads as broken. The
+same strings render visibly in the footer, which turned out to be a nice sighted-user feature
+for free.
+
+The pointer path uses a projection approach instead of live array reordering: while you drag,
+the list order never changes. The dragged row follows the pointer, a projected index is
+computed from the drag distance, and neighboring rows slide out of the way with a 160ms
+transform. Only on release does the array actually reorder. This avoids the jitter you get
+when reordering state mid-drag, where the item under your pointer keeps changing identity.
+Rows are absolutely positioned on a fixed stride, so the neighbor shifts are just translateY
+by one row height, no FLIP measurement required.
+
+Under `prefers-reduced-motion` the neighbor transitions turn off and rows snap to their new
+positions. The interaction survives intact; only the choreography goes.

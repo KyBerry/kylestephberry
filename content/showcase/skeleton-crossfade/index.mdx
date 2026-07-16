@@ -1,0 +1,34 @@
+---
+title: 'Skeleton crossfade'
+summary: 'A loading-state study with a minimum display time, so the skeleton never flashes and the content never jumps.'
+publishedAt: '2026-06-03'
+tags: ['motion', 'loading', 'interaction']
+featured: false
+mountStrategy: 'always'
+---
+
+Skeletons have a failure mode nobody designs for: the fast response. When data arrives in
+80ms, a naive implementation flashes the skeleton for a single frame and then slams content
+into place. It reads as a glitch. The slow path gets all the design attention, and the fast
+path (which is most loads, most days) gets the worst experience.
+
+The fix here is a minimum display time. Once the skeleton is visible, it stays visible for at
+least 450ms even if the data came back sooner. If the fetch is slower than that, content swaps
+in the moment it lands, so the floor never adds latency to a genuinely slow response. Hit
+reload a few times and watch the readout: the simulated latency is randomized, so sometimes
+the skeleton is held and sometimes it isn't.
+
+The second half of the pattern is layout stability. The skeleton and the content render into
+the same grid cell, and the skeleton's line widths are drawn to roughly match the content it
+stands in for. The crossfade is a plain opacity transition between two layers that already
+occupy identical space, so nothing reflows during the swap. If your skeleton is a different
+height than your content, the crossfade just relocates the jank instead of removing it.
+
+Reduced motion gets two accommodations: the shimmer animation is only applied inside a
+`prefers-reduced-motion: no-preference` block, and the crossfade collapses to an instant
+swap. A shimmering placeholder is exactly the kind of ambient movement that setting exists to
+turn off.
+
+One number worth stealing: 450ms. Below roughly 400ms a held skeleton starts to feel like
+added latency; much above 500ms and fast responses feel throttled. I landed on 450 by feel
+after trying a range, and I'd tune it per surface rather than treat it as a constant.

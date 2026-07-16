@@ -1,0 +1,35 @@
+---
+title: 'OKLCH ramp explorer'
+summary: 'Pick a chroma and hue, get a ten-step lightness ramp with live WCAG contrast ratios and copy-ready oklch() values.'
+publishedAt: '2026-07-04'
+tags: ['design-systems', 'color', 'tooling']
+featured: true
+mountStrategy: 'always'
+---
+
+Every color scale on this site is written in OKLCH, and this little tool is why. In OKLCH,
+the lightness channel actually means lightness: two colors with the same L read as equally
+bright regardless of hue. Build a ten-step ramp in HSL and the yellow steps glow while the
+blue steps go muddy. Build the same ramp in OKLCH and the steps stay evenly spaced, which is
+the entire job of a ramp.
+
+The explorer holds chroma and hue fixed and walks lightness from 0.25 to 0.96, which is how I
+actually construct scales: pick the hue, pick how saturated the family should be, and let
+lightness do the stepping. Drag the hue slider across its full range and watch the ramp keep
+its visual rhythm. That consistency is the property you are buying with OKLCH.
+
+The contrast readout is the practical half. Each step converts to sRGB by hand (the OKLab
+matrices are about fifteen lines of code) and computes a WCAG relative luminance from the
+linear values, then reports the ratio against whichever text color the swatch itself chose,
+white or black. The tier labels follow the spec: 4.5:1 for normal text, 3:1 for large text,
+7:1 for AAA. Watching the AA boundary move as you drag chroma teaches you more about contrast
+than any table of hex codes did for me.
+
+One honest wrinkle: OKLCH can describe colors that sRGB cannot display. Push chroma high and
+some steps leave the gamut, at which point this component clamps the channels and labels the
+step "clipped." Real CSS engines do something smarter than clamping (gamut mapping toward
+lower chroma), but I wanted the failure visible rather than silently prettified, because a
+clipped step means your token will not render as the math suggests on most displays today.
+
+The copy interaction mirrors the token explorer elsewhere in this catalog: click a step,
+get the `oklch()` string on your clipboard, paste it straight into a CSS custom property.

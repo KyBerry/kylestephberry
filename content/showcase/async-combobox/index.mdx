@@ -1,0 +1,38 @@
+---
+title: 'Async combobox'
+summary: 'An autocomplete over a slow data source: debounce, a stale-response guard, and the full ARIA combobox contract.'
+publishedAt: '2026-06-26'
+tags: ['accessibility', 'keyboard', 'interaction']
+featured: true
+mountStrategy: 'always'
+---
+
+The combobox is the pattern I point to when someone asks why accessibility work has a
+reputation for being hard. It is one input and one list, and getting it right touches ARIA
+semantics, focus strategy, async state, and race conditions all at once. This one searches a
+small catalog of typefaces through a simulated backend with real latency, because the async
+wrinkles are where most implementations fall apart.
+
+The semantic skeleton follows the ARIA Authoring Practices combobox pattern: the input takes
+`role="combobox"` with `aria-expanded` and `aria-autocomplete="list"`, the popup is a
+`role="listbox"` full of `role="option"` items, and `aria-controls` ties them together. Focus
+never leaves the input. Instead, `aria-activedescendant` points at the visually highlighted
+option, which is what lets you keep typing while arrowing through results. Moving real DOM
+focus into the list is the classic mistake, and it breaks exactly that.
+
+Async adds two problems that a static command palette never sees. The first is timing:
+queries are debounced 200ms so the fake backend is not hammered per keystroke. The second is
+ordering. Responses arrive with randomized latency, so a slow response for "gro" can land
+after a fast response for "grot". Every request takes a sequence number, and any response
+that is not the newest is dropped on the floor. Without that guard the list flickers to
+stale results, and worse, `aria-activedescendant` can end up pointing at an option that no
+longer exists.
+
+The part you cannot see is the live region below the input. Sighted users watch the list
+change as they type; screen reader users get nothing unless you announce it. A visually
+hidden `aria-live="polite"` element reports "6 results available" whenever a query resolves,
+which is the difference between a usable autocomplete and a silent one.
+
+Small details worth keeping: `onMouseDown` on options calls `preventDefault()` so clicking
+never blurs the input, Escape closes the popup without clearing the selection, and choosing
+an option returns focus to the input so the flow can continue with the keyboard.

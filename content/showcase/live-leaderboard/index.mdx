@@ -1,0 +1,40 @@
+---
+title: 'Live leaderboard'
+summary: 'Rows that FLIP into their new positions as scores change, with pausable updates and rank deltas that are more than a color.'
+publishedAt: '2026-07-14'
+tags: ['motion', 'data', 'interaction']
+featured: true
+mountStrategy: 'always'
+---
+
+When a table re-sorts without animation, rows teleport and you lose the row you were reading.
+The motion here is not decoration: watching a row slide from fourth to second is what tells
+you it overtook two others. Teleporting communicates none of that.
+
+The technique is FLIP: First, Last, Invert, Play. After each score tick re-renders the list,
+a layout effect measures where every row landed, compares it with where that row was on the
+previous render, and uses the Web Animations API to play the row from its old position back
+to its new one. React renders the final state immediately; the animation is a purely visual
+overlay on top of it. I like WAAPI for this because there is no animation state to keep in
+React at all. No `isAnimating` flags, no transition-end bookkeeping, and interrupted
+animations just get replaced by the next `animate()` call.
+
+Two details carry the accessibility weight. First, the pause button. A table that reshuffles
+itself every two seconds is hostile to anyone who reads slowly, uses magnification, or drives
+the page with a screen reader, so updates can be stopped and the button's label reports
+which state you are in. I considered a live region announcing changes and decided against it:
+announcing every tick is spam, and spam trains people to turn announcements off. Pausing is
+the better tool for this component. Second, the movement column. The caret and places-moved
+count sit in a fixed column beside the rank, the way music charts and league tables do it,
+so indicators align row to row instead of trailing each name. Color carries the quick read,
+the caret's direction survives without color, and a visually hidden "moved up 2" carries
+the words for screen readers.
+
+The score bump also flashes the row background using the site's accent-soft token, which
+answers the other question motion should answer: not just where did this row go, but why.
+A row can move down without doing anything wrong (someone below it scored), and the flash
+distinguishes "you moved" from "you scored."
+
+Numbers are set in a mono face with `tabular-nums` so a score changing from 498 to 512 does
+not cause the column to wobble. Small thing, but wobble is the difference between a dashboard
+that feels engineered and one that feels rendered.
