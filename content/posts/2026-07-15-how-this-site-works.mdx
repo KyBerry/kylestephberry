@@ -1,0 +1,68 @@
+---
+title: 'How this site works'
+summary: 'The full pipeline behind this site: content-collections, a live component showcase with inlined source, and a handful of deliberate boring choices.'
+publishedAt: '2026-07-15'
+tags: ['engineering', 'frontend', 'meta']
+featured: true
+---
+
+import { Callout } from '@/components/mdx/Callout'
+
+I rebuilt this site to be the thing it describes: a design engineer's site should itself be
+an argument for hiring a design engineer. That meant no page builder, no theme, and a few
+pieces of custom infrastructure that were fun enough to write about.
+
+## The content layer
+
+Everything is a file in the repo. Posts are MDX, the work timeline and design gallery are
+YAML, and [content-collections](https://www.content-collections.dev) turns all of it into
+typed data with zod schemas at build time. The detail I like most: collections parse
+frontmatter only, and each document's body is wired up with `createDefaultImport`, which
+hands the MDX module to the bundler as a static import. Turbopack compiles and bundles post
+bodies like any other module, so components inside MDX are real components, not a runtime
+eval. The build fails if a post's frontmatter is malformed, which has saved me more than
+once. Reading time and previous/next navigation are computed in the same transform, so
+pages never do that work at request time. There is no request time: every page on this site
+is static.
+
+## The showcase pipeline
+
+The component catalog is the part I am proudest of. Each entry is a directory holding an
+`index.mdx` (frontmatter and written notes) and a `component.tsx` with a default export.
+The build does three things with that one file: statically imports it so the live component
+renders on the page, reads its source as text, and runs the source through Shiki so the
+highlighted code you see in the source pane is generated at build time, not in your browser.
+
+One file, three views, zero drift. The code shown next to a demo is the code running the
+demo, by construction. It also means these posts can drop any component inline:
+
+<Showcase slug="hello-button" />
+
+That is the catalog's baseline entry, embedded with `<Showcase slug="hello-button" />`. The
+embed renders the same frame as the catalog page, source pane included.
+
+<Callout type="note">
+  The honest cost of this design: every showcase component ships to the client as part of its page,
+  so each one has to stay dependency-free and small. I have come to see that constraint as the
+  feature. It is a component library where the budget is enforced by architecture.
+</Callout>
+
+## The rest of the stack, briefly
+
+Search is [Pagefind](https://pagefind.app), which indexes the built HTML after the fact and
+ships a tiny WASM search that runs entirely in the browser. No search service, no index to
+keep in sync. Smooth scrolling is Lenis, wrapped in a provider that respects
+`prefers-reduced-motion`. Design gallery images get blur placeholders computed by a `sharp`
+prebuild script that caches by file mtime, so unchanged images cost nothing on rebuild. RSS
+is a route handler. Open Graph images are generated per post.
+
+## The boring choices
+
+No CMS, because the repo is the CMS and pull requests are the editorial workflow. No
+client-side data fetching, because there is no data that changes without a deploy. No
+component framework beyond React itself in the showcase entries, because the point of the
+catalog is to show the mechanism, not the wrapper. Every one of these was a decision against
+something shinier, and so far every one has paid rent.
+
+The source of truth for all of it is the site you are reading. If a claim in this post ever
+drifts from the code, the showcase pipeline will happily rat me out.

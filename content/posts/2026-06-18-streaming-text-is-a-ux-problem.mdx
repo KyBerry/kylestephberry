@@ -1,0 +1,68 @@
+---
+title: 'Streaming text is a UX problem, not a transport problem'
+summary: 'Getting tokens to the client is the easy half. Pacing, layout stability, and announcement are where streaming UIs earn their feel.'
+publishedAt: '2026-06-18'
+tags: ['ai', 'interaction', 'accessibility']
+featured: true
+---
+
+import { Callout } from '@/components/mdx/Callout'
+
+Most writing about AI streaming interfaces is about the transport: SSE versus WebSockets,
+backpressure, reconnection. All real concerns, and none of them are why one streaming UI
+feels alive and another feels like a dot-matrix printer. The difference is in decisions that
+happen after the token arrives.
+
+This is the demo I keep coming back to when I think about it:
+
+<Showcase slug="ai-stream" />
+
+## Pacing is a rendering decision
+
+Tokens arrive from the network in bursts: nothing for 300ms, then forty tokens at once.
+Render them as they arrive and the text stutters and lurches. The fix is a small buffer
+between the network and the DOM that meters tokens out at a readable rhythm, draining
+faster when it gets behind so the buffer never grows unbounded.
+
+Once you own the rhythm, you can shape it. Uniform delay reads as mechanical, so the demo
+above jitters each token's delay and adds a longer pause after sentence-ending punctuation.
+It is a small thing that changes the texture completely: the output reads as writing rather
+than printing.
+
+## Layout has to hold still
+
+The reader is trying to read while you mutate the document under them. Two rules keep that
+tolerable. First, nothing that has already rendered may move: no reflowing earlier
+paragraphs, no re-measuring containers mid-stream. Second, auto-scroll must be polite. Stick
+to the bottom while the user is at the bottom, but the moment they scroll up to re-read
+something, stop following. Yanking the scroll position away from someone mid-read is the
+single most hostile thing a streaming UI can do.
+
+Markdown adds a wrinkle: half-arrived syntax. An unclosed code fence will restyle the
+entire rest of the message as code for a few frames. If you render markdown mid-stream,
+parse defensively (auto-close open fences before rendering) or hold formatting back until
+the block completes.
+
+## Screen readers hear this too
+
+An `aria-live` region that announces every token is unusable, and one that announces nothing
+leaves a non-visual user staring at silence. The pattern I like: `aria-live="polite"` on the
+message container so it announces in coherent chunks when the user is idle, plus an explicit
+announcement when generation completes. The "done" signal is the one that matters most;
+sighted users get it from the cursor disappearing, so everyone else deserves an equivalent.
+
+<Callout type="note">
+  `prefers-reduced-motion` applies here more than people think. A blinking cursor and a pulsing
+  "thinking" indicator are both motion. The demo shortens token delays and drops the pulse when the
+  preference is set, since slower typewriting is not a kindness, it is just more waiting.
+</Callout>
+
+## The stop button is part of the typography
+
+Every streaming interface needs a visible way to interrupt, and it needs to work instantly
+even though the backend will take a moment to actually stop. Cancel the rendering loop
+first, flush what has arrived, then tell the server. Users judge responsiveness by the
+pixels, not the socket.
+
+None of this touches the model or the protocol. It is all interface craft, which is good
+news: it means the feel of a streaming UI is fully in our hands.

@@ -1,0 +1,68 @@
+---
+title: 'The combobox is the boss fight of ARIA'
+summary: 'One input, one list, and nearly every hard problem in accessible UI at once. Notes from building an async autocomplete properly.'
+publishedAt: '2026-06-30'
+tags: ['accessibility', 'keyboard', 'interaction']
+featured: true
+---
+
+import { Callout } from '@/components/mdx/Callout'
+
+If you want to find out whether a component library takes accessibility seriously, skip the
+buttons and go straight to the autocomplete. The combobox is where ARIA semantics, focus
+strategy, async state, and race conditions all show up in the same fifty lines. I built one
+from scratch to make sure I actually understood each piece, and it earned its reputation.
+
+<Showcase slug="async-combobox" />
+
+## The contract, in one paragraph
+
+The input takes `role="combobox"`, `aria-expanded`, and `aria-autocomplete="list"`. The
+popup is a `role="listbox"` of `role="option"` items, tied to the input with
+`aria-controls`. The highlighted option is communicated through `aria-activedescendant` on
+the input, and `aria-selected` on the option. That is the whole spec, and each attribute
+exists because a screen reader asks a specific question: what is this? is it open? what is
+highlighted right now?
+
+## Focus never moves. That is the trick.
+
+The instinct is to treat the list like a menu and move DOM focus into it on ArrowDown. Do
+that and typing stops working, because the keystrokes now land on a list item. The combobox
+pattern keeps real focus pinned to the input forever and fakes the highlight with
+`aria-activedescendant`, which is exactly what lets you type "gro", arrow down twice, and
+keep typing. Once I internalized "focus stays, the accessible cursor moves," the rest of the
+pattern stopped feeling arbitrary.
+
+The pointer side has a matching trap: clicking an option blurs the input, and if your blur
+handler closes the popup, the click lands on nothing. The fix is one line
+(`onMouseDown={(e) => e.preventDefault()}` on the option) and its absence is the classic
+"why does clicking the dropdown not work" bug.
+
+## Async is where implementations die
+
+A static combobox is a filter. A real one talks to a server, and servers answer out of
+order. Type "grot" and the response for "gro" can land last, quietly replacing better
+results with stale ones. Worse, `aria-activedescendant` can now reference an option that no
+longer exists, which is an ARIA error a sighted developer will never notice.
+
+The demo handles it with a monotonic sequence number: every request takes one, and any
+response that is not the newest gets dropped. An `AbortController` works too. What does not
+work is hoping, which is what most autocompletes ship.
+
+<Callout type="tip">
+  Results changing is also an announcement problem. Sighted users watch the list respond to typing;
+  screen reader users hear nothing unless you say something. A visually hidden `aria-live="polite"`
+  region reporting "6 results available" after each resolve is cheap and transforms the experience.
+</Callout>
+
+## Judge a library by this component
+
+I built this to learn it, not because I think everyone should hand-roll comboboxes. Most of
+the time you should not. But having built one, I can now read a library's autocomplete in
+five minutes and know whether the authors did: check for `aria-activedescendant`, check the
+mousedown handler, check what happens to in-flight requests. It is a very effective
+truth serum.
+
+If you want a gentler on-ramp to the same ideas, the [command
+palette](/components/command-palette) in the catalog is this pattern without the async
+layer: same contract, fewer ways to lose.

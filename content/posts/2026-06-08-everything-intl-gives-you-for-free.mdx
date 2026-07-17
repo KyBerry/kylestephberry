@@ -1,0 +1,65 @@
+---
+title: 'Everything Intl gives you for free'
+summary: 'The platform ships a full localization toolkit and most of us still hand-roll formatters. A tour of what you can delete.'
+publishedAt: '2026-06-08'
+tags: ['i18n', 'engineering']
+featured: true
+---
+
+import { Callout } from '@/components/mdx/Callout'
+
+Every codebase I have ever poked through has a `formatDate` util, a `formatCurrency` util,
+and a `pluralize` helper someone wrote at 6pm on a Thursday. All three are bugs waiting for
+their first non-English user. The browser has shipped correct, locale-aware versions of all
+of them for years, and they are collectively about as underused as any API on the platform.
+
+Here is the playground I built to make the differences visible. Flip the locale and watch
+what changes:
+
+<Showcase slug="i18n-formatting-playground" />
+
+## The roster
+
+**`Intl.NumberFormat`** does currency, percentages, compact notation ("1.2M"), and units
+("12 km/h"). The killer detail is that it knows things you would get wrong: the yen has no
+minor unit, Germany swaps the comma and period, and some locales put the currency symbol
+after the amount. `style: 'currency', currency: 'EUR'` is the whole API surface you need.
+
+**`Intl.DateTimeFormat`** replaces the usual date library for display purposes. The
+`dateStyle` and `timeStyle` presets ("full", "long", "medium", "short") map to what a locale
+actually expects instead of a format string you invented. If you are shipping `MM/DD/YYYY`
+to the whole world, this is the two-line fix.
+
+**`Intl.RelativeTimeFormat`** produces "yesterday", "in 3 days", "vor 2 Tagen". Everyone
+builds this by hand with a chain of if-statements, and everyone's version disagrees about
+when "yesterday" becomes "2 days ago". The platform's version has an opinion per locale.
+
+**`Intl.PluralRules`** is the one that ends the `count === 1 ? 'item' : 'items'` pattern.
+English has two plural categories. Arabic has six. Polish has rules about numbers ending
+in 2 through 4. You cannot ternary your way out of this, and you do not have to.
+
+**`Intl.ListFormat`** turns `['Ana', 'Ben', 'Chika']` into "Ana, Ben, and Chika", including
+the locale's stance on the Oxford comma. It is the smallest API in the family and it still
+beats `arr.join(', ')` the moment a second language shows up.
+
+**`Intl.Segmenter`** is the sleeper. It splits text by grapheme, word, or sentence, which is
+the only correct way to truncate a string that might contain emoji or scripts without
+spaces. `str.slice(0, 20)` can cut a family emoji in half. The segmenter never will.
+
+**`Intl.Collator`** sorts strings the way the locale expects, so "ä" lands where a German
+or a Swede expects it (they disagree, which is the point).
+
+<Callout type="tip">
+  Formatting is also an accessibility concern. If you build an `aria-label` by concatenating a raw
+  number into a string, a German screen reader user gets `1,234.56` read as nonsense. Run every
+  value through the right formatter before it reaches the DOM, visible or not.
+</Callout>
+
+## The habit
+
+Treat locale as data that flows into the component, and hand every human-facing value to an
+`Intl` formatter on the way out. Construct formatters once and reuse them (`new
+Intl.NumberFormat` is not free), or memoize by locale. That is the entire discipline.
+
+The formatting library you are maintaining is not more correct than the platform. It is just
+more yours. Delete it.

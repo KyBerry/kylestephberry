@@ -1,0 +1,67 @@
+---
+title: 'Virtualization breaks screen readers. Here is the repair kit.'
+summary: 'Windowed rendering deletes most of your table from the accessibility tree. The fixes are specific, cheap, and mostly unknown.'
+publishedAt: '2026-07-11'
+tags: ['accessibility', 'dashboards', 'engineering']
+featured: true
+---
+
+import { Callout } from '@/components/mdx/Callout'
+
+I wrote before about [where dashboards fail on
+accessibility](/blog/2026-05-25-building-accessible-dashboards), and the virtualization
+section of that post kept nagging at me. It deserves its own treatment, because the failure
+is structural: virtualization works precisely by lying to the DOM, and the accessibility
+tree is built from the DOM.
+
+Here is a virtualized table you can poke at while reading:
+
+<Showcase slug="virtualized-table" />
+
+## What actually breaks
+
+A windowed list renders maybe twenty of its ten thousand rows. Assistive tech sees exactly
+those twenty. The concrete symptoms:
+
+**The row count is a lie.** A screen reader announces "row 12 of 20" for a table the sighted
+user experiences as ten thousand rows. The user has no idea the other 9,980 exist.
+
+**Sequential navigation hits a wall.** "Jump to next row" works until the edge of the
+rendered window, then stops. From the user's chair, the table simply ends.
+
+**Find-in-page is dead.** Ctrl+F only searches mounted DOM. So does "select all," so does
+reader mode, so does any browser extension that reads the page.
+
+**Focus evaporates.** If focus is inside a row and the user scrolls it out of the window,
+the row unmounts and focus falls back to `<body>`. For a keyboard user that is a teleport to
+the top of the page with no explanation.
+
+## The repair kit
+
+The first two problems have direct ARIA answers. Set `aria-rowcount` on the table to the
+true total, and `aria-rowindex` on each rendered row to its true position in the full
+dataset. Announcements become "row 47 of 10,000," and screen readers understand the table
+extends beyond what is rendered. This is two attributes, and almost no virtualized table
+ships them.
+
+Focus loss needs a policy, and there are two defensible ones. Either pin the focused row so
+it never unmounts while it holds focus (my preference: one extra row rendered outside the
+window is cheap), or track the focused cell's coordinates and restore focus when the row
+remounts. What is not defensible is the default, where focus silently dies.
+
+<Callout type="tip">
+  Make keyboard navigation drive the window instead of the other way around. Arrow keys and PageDown
+  should move a cursor through the dataset and scroll the window to follow it, so virtualization
+  becomes an implementation detail the keyboard user never encounters.
+</Callout>
+
+Find-in-page has no clean fix, so be honest about it and compensate: a real search input
+over the full dataset, visible and keyboard-reachable, does what Ctrl+F cannot. And below a
+few hundred rows, ask whether you need virtualization at all. Rendering 300 rows is fine.
+An escape hatch ("show all 300") is sometimes the most accessible feature on the page.
+
+## The test that catches all of this
+
+Unplug your mouse, turn on VoiceOver or NVDA, and try to answer one question from your own
+table: "what is the last row?" If the honest answer is "I cannot get there," you have not
+shipped a table, you have shipped the first twenty rows of one.

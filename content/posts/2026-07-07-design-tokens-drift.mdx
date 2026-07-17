@@ -1,0 +1,69 @@
+---
+title: 'Design tokens drift, and how to notice'
+summary: 'Token systems do not fail loudly. They erode one hardcoded hex and one near-duplicate at a time. Here is what erosion looks like.'
+publishedAt: '2026-07-07'
+tags: ['design-systems', 'engineering']
+featured: true
+---
+
+import { Callout } from '@/components/mdx/Callout'
+
+Nobody decides to break a token system. It breaks the way a footpath breaks a lawn: one
+person cuts a corner under deadline, the shortcut becomes visible, and the next person takes
+it because it is visibly there. Six months later the "system" is a folder of aspirational
+names and a codebase full of raw values.
+
+I keep a small tool for staying honest about this on my own projects:
+
+<Showcase slug="token-explorer" />
+
+## The three kinds of drift
+
+**Raw values sneaking in.** A `#2a2a2a` in a component file because looking up the token
+name felt slow that day. Individually harmless. Collectively, they mean a theme change no
+longer changes the theme.
+
+**Near-duplicate tokens.** Someone needs a border a touch stronger than `border`, does not
+find one, and mints `border-strong-2`. Now there are two truths, and every future reader has
+to guess which one is real. Duplicates are worse than raw values because they wear the
+system's own uniform.
+
+**Semantic bypass.** The palette has layers: raw scales at the bottom (`gray-300`), semantic
+roles on top (`border-muted`). Drift is when components reach past the semantic layer and
+grab the raw scale directly. It works, right up until the semantic layer needs to remap
+(dark mode, a rebrand, a contrast fix) and half the codebase does not come along.
+
+## Noticing is a build step, not a vibe
+
+The useful realization for me was that all three kinds are mechanically detectable, and none
+of them require a platform team.
+
+A lint rule or a grep in CI that counts raw color literals (`#`, `rgb(`, `oklch(`) outside
+the token definitions catches the first kind. The count matters more than the rule: get it
+to zero once, then fail the build when it rises. A ratchet, not an aspiration.
+
+For the second kind, render your tokens. A page that draws every token as a swatch with its
+name and value makes near-duplicates embarrassing in a way a YAML file never will. Two
+almost-identical grays sitting adjacent on screen ask the question themselves. This is why
+my token browser above reads the site's live CSS variables instead of a static list: it
+cannot lie about what is actually shipped.
+
+<Callout type="note">
+  The rendered token sheet doubles as a visual regression target. Screenshot it in CI and a token
+  value change shows up as a diff, reviewed like any other UI change instead of slipping through as
+  "just a variable."
+</Callout>
+
+The third kind is naming discipline plus one rule: components may only reference the
+semantic layer. If that is enforceable in your setup (a lint rule on allowed variable
+prefixes gets you most of the way), enforce it. If not, review for it, and keep the raw
+scale physically separate so reaching past the seam is at least visible in the import.
+
+## Keep the palette small enough to police
+
+Every one of these mechanisms gets cheaper as the token count shrinks. This site runs on
+about a dozen color tokens, and drift is easy to spot precisely because any new value has
+nowhere to hide. If your system has three hundred tokens, the drift is already inside the
+definitions. For building the scales themselves, I use an [OKLCH ramp
+explorer](/components/oklch-explorer) so lightness steps stay perceptually even and contrast
+is checked at mint time, which is one less reason for anyone to go off-palette later.
