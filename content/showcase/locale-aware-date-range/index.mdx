@@ -1,0 +1,30 @@
+---
+title: 'Locale-aware date range'
+summary: 'Choose a range in English, French, or Arabic with locale-correct weeks and keyboard navigation.'
+publishedAt: '2026-08-02'
+tags: ['accessibility', 'i18n', 'keyboard', 'interaction']
+featured: true
+mountStrategy: 'always'
+---
+
+A date picker exposes locale assumptions quickly. Month names are only the beginning: weeks start on
+different days, number systems vary, and Arabic changes the reading direction. This picker keeps
+those decisions in one locale configuration instead of scattering them through presentation classes.
+
+The example is fixed to August 2026, and every date uses UTC so the server preview and hydrated client
+agree in every time zone. English, French, and Arabic each get localized month, weekday, date, and
+number formatting. Arabic also puts the calendar subtree in right-to-left mode, with a Saturday week
+start and physical arrow movement that still follows the grid on screen.
+
+Keyboard focus uses one tab stop inside the grid. Arrow keys move by day or week, Home and End jump
+to the localized edges of a week, and Page Up or Page Down moves by month. Holding Shift makes that
+a year jump. Moving beyond the current month updates the visible grid and focuses the destination;
+unavailable dates are skipped. Pointer hover and keyboard focus both preview the unfinished range,
+so the interaction does not reserve useful feedback for one input method.
+
+Focus and selection remain separate. The first activation sets the start, the second completes the
+range, and the third starts over. Solid endpoints anchor a completed range, interior dates share a
+quiet band, and an unfinished range uses a dashed outline. Focus keeps its own outline. Presets use
+the same state, while a polite live region reports each completed choice. This demo lets a completed
+range cross an unavailable date, but the unavailable day is not shown or exposed as selected. Booking
+and scheduling products should decide whether that is valid before reusing the picker.

@@ -1,0 +1,115 @@
+---
+title: "The Figma file doesn't contain the interface"
+summary: 'A frame can show how a product rests. Shipping it requires a contract for states, transitions, input, failure, and recovery.'
+publishedAt: '2026-07-24'
+tags: ['design-systems', 'interaction', 'engineering']
+featured: true
+---
+
+I like Figma. I have used it for prototyping, design-system work, and the ordinary back-and-forth
+of turning an idea into something a team can discuss. At Truvy, where I led frontend and design
+systems for truTransformation, that work sat directly beside a Nuxt and Vue e-commerce platform.
+Moving between the design tool and the running product made one limitation impossible to ignore:
+the Figma file does not contain the interface.
+
+It contains evidence about the interface. A frame can establish hierarchy, spacing, type, color,
+and one carefully selected moment. A prototype can connect several of those moments. But the
+interface is the behavior between them: what happens while data is missing, which input wins when
+two arrive together, where focus goes after an error, and whether a person's work survives a failed
+request. Those decisions are easy to postpone because they are mostly invisible in a static review.
+They are also where a product begins to feel either dependable or improvised.
+
+## Frames describe nouns. Products are verbs.
+
+A frame is naturally good at describing nouns: a dialog, a cart, a field, a total. Software is
+mostly verbs: open, add, validate, submit, cancel, retry, restore. Even a button is not really one
+thing. It can be available, focused, pressed, waiting, successful, or unable to continue. The label
+may grow in another language. The pointer may leave before the action completes. A keyboard user
+may expect Escape to reverse the last transition while a screen reader user needs the result
+announced without focus being thrown somewhere surprising.
+
+This is why pixel-perfect implementation is an incomplete goal. It can produce a faithful copy of
+the resting frame and still miss the product. When a design shows a populated table but says
+nothing about loading, an engineer has to invent loading. When it shows an error but not the data
+that remains underneath it, someone has to decide whether failure erases useful work. When a
+prototype jumps from closed to open, it does not necessarily answer whether focus moves, whether
+the background becomes inert, or what closing restores.
+
+I do not think the answer is to draw every possible frame. That creates a museum of screenshots
+and still leaves the transitions implicit. The more useful artifact is a small interaction contract
+that sits beside the visual work and names what the pixels cannot.
+
+## The state and interaction contract I use
+
+For any component with meaningful behavior, I want six things written down before the details
+disappear into code review.
+
+1. **States:** the smallest set of meaningful conditions the user can perceive. “Open” and
+   “closed” may be enough for a disclosure. A save flow may need idle, dirty, validating, saving,
+   saved, and failed. State names should describe product meaning, not implementation details such
+   as a particular hook or Boolean.
+2. **Events:** everything allowed to change those states. Include user events such as typing,
+   submitting, pressing Escape, and navigating away, but also system events such as a response
+   arriving, a connection dropping, or newer data replacing older data.
+3. **Transitions:** the legal state-to-state moves and the event that causes each one. If Escape
+   cancels editing while the field is dirty, does it restore the last saved value or leave the
+   draft visible? A transition should answer that directly.
+4. **Side effects:** work that happens because of a transition: send a request, persist a draft,
+   move focus, announce a result, or return focus to a trigger. Side effects are part of the user
+   experience even when they do not draw anything.
+5. **Invariants:** facts that must remain true throughout the interaction. Do not submit the same
+   edit twice. Do not discard a draft because saving failed. Do not point `aria-activedescendant`
+   at an option that no longer exists. Invariants turn vague expectations into reviewable rules.
+6. **Input and environment:** keyboard and pointer behavior, touch target needs, accessible names,
+   reduced-motion behavior, text expansion, number and date formatting, narrow layouts, and slow
+   or interrupted networks. These are not alternate versions of the component. They are the
+   conditions under which the component has to remain itself.
+
+The contract can be a short table, a diagram, or a block of prose. Its format matters less than
+whether a designer, engineer, and tester can all point to the same transition and reach the same
+conclusion. I like to read it aloud as sentences: “From dirty, Submit moves to validating. A valid
+result moves to saving. A failed request returns to dirty, preserves the draft, places an inline
+message beside the relevant action, and announces that saving failed.” If the sentence becomes
+awkward, the interaction is usually still underspecified.
+
+## A save flow is a useful test case
+
+Consider a small editable profile, as a general pattern rather than a description of any specific
+product. The attractive frame is the completed form. The actual interface starts when somebody
+changes a value.
+
+While **idle**, the saved value and the field agree. Typing creates a draft and moves the form to
+**dirty**. Submit moves it to **validating**; invalid input stays dirty and connects a specific
+message to the field. Valid input moves to **saving**. The draft remains visible while the request
+is in flight, and repeated submits do not create repeated requests. Success updates the saved
+baseline and enters **saved** long enough to communicate the result. Failure returns to dirty,
+keeps the person's draft, and offers Retry. Cancel from dirty restores the saved baseline, but it
+does not pretend a request can always be recalled once the server has accepted it.
+
+That sequence creates concrete interaction requirements. Enter can submit when focus is in an
+appropriate single-line field; Escape can cancel an unsaved edit if the component promises that
+behavior. Validation does not steal focus on every keystroke. On submit, focus moves to the first
+invalid field only when that movement helps the person recover. Saving status is exposed as text,
+not only as a spinner. Failure is announced politely, while a successful save does not interrupt
+someone who has already moved on. If navigation would discard the draft, the product makes that
+consequence explicit.
+
+None of those requirements changes the color of the button. Every one changes whether the form is
+safe to use.
+
+## Keep design and implementation honest together
+
+I now treat the visual file and the state contract as two halves of one design. Figma is where I
+explore composition, responsive intent, component variants, and the transitions worth prototyping.
+The contract records state, ownership, and recovery. In implementation, those names should survive:
+tests should talk about “dirty” and “saving,” not only click a coordinate and wait for a selector.
+The design system should carry shared tokens and interaction patterns so each feature does not
+invent focus, status, and error behavior again.
+
+There is still judgment involved. Not every hover needs a state diagram, and not every transition
+deserves a polished animation. I use a simple threshold: if an action can lose work, wait on a
+system, change focus, or produce a result the user cannot see, it needs an explicit contract.
+
+The goal is not more documentation. The goal is fewer accidental product decisions made at the
+last possible moment. A good Figma file gives the team a compelling picture of what they are
+building. A good interaction contract tells them what that picture does when real life touches it.

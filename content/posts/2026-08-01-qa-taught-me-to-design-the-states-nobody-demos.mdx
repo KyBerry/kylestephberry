@@ -1,0 +1,120 @@
+---
+title: 'QA taught me to design the states nobody demos'
+summary: 'Loading, empty, partial, stale, failed, retrying, cancelled, and undone are not edge cases. They are the interface keeping its promises.'
+publishedAt: '2026-08-01'
+tags: ['quality', 'interaction', 'accessibility']
+featured: true
+---
+
+Before I led frontend and design-system work, I worked in QA at BMA Banking Systems. My public
+resume description is straightforward: I automated documentation workflows with Python and built
+Jira integrations for banking QA teams. The longer-lasting part of that experience is harder to
+fit in a timeline. QA changed the order in which I see an interface.
+
+A polished demo invites you to follow the intended path: arrive with good data, take the expected
+action, receive the expected result. QA asks what happens one step to either side. What if the data
+has not arrived? What if only half of it arrives? What if the request succeeds after the person has
+cancelled? What remains true when the optimistic version and the persisted version disagree?
+
+I still ask those questions while designing. They are not pessimism, and they are not a checklist
+applied after the “real” interface is finished. The states nobody demos are where the interface
+explains its actual promises.
+
+## The happy path is only one state sequence
+
+Quality work separates what the system should do from its demo route. A feature can pass a pleasant
+walkthrough and remain incoherent everywhere else. A list
+looks finished when it contains five tidy rows. Its design is unfinished until it can distinguish
+“we have not asked yet,” “we asked and found nothing,” and “we asked but could not get an answer.”
+Those conditions may all occupy the same rectangle, but they do not mean the same thing and should
+not offer the same next action.
+
+This shift matters because users do not experience edge cases as edges. They experience whatever
+state the product is currently in. Slow data is the whole product while they wait. A failed save is
+the whole product while their work feels at risk. An undo message is the whole product during the
+few seconds when a mistake can be reversed.
+
+The QA instinct I kept is to identify observable states before polishing the primary one. I do not
+need a separate mockup for every network fluctuation, but I need an answer to three questions: what
+does the person know, what can they safely do, and what will the system preserve?
+
+## Eight states worth naming explicitly
+
+**Loading** means the system is waiting for an initial answer. The interface should reserve enough
+space to avoid a needless jump, communicate that work is happening, and avoid showing controls
+whose consequences depend on data that is not here. A skeleton can suggest structure, but it should
+not fabricate meaning or become an endless alibi for a stalled request.
+
+**Empty** means the request completed and the result is genuinely empty. This is knowledge, not
+absence. A good empty state says what is empty and offers the action most likely to change it. It
+does not reuse a loading spinner or imply that more patience will produce records.
+
+**Partial** means some useful content exists while another part is missing, unavailable, or still
+arriving. I prefer preserving the useful portion and marking its boundary over replacing an entire
+surface with one global error. Partial state also needs honesty: totals, bulk selection, and other
+derived actions may be unsafe if they imply completeness.
+
+**Stale** means visible data was once valid but may no longer represent the latest answer. Stale is
+often better than blank. Keep the last useful view, show when or why confidence changed, and provide
+a refresh path without presenting old information as current. The important distinction is between
+“I can still read this” and “I can safely act on this.”
+
+**Failed** means an attempted operation did not complete as promised. Failure copy should identify
+the affected action and the fate of the person's input. “Could not save; your changes are still
+here” is more useful than a detached “Something went wrong.” The recovery action belongs beside the
+failure, not in a toast that disappears before it can be understood.
+
+**Retrying** is not simply loading for a second time. The user now has history and a reason to be
+uncertain. Preserve the failed context, make repeated work visible, prevent accidental duplicate
+actions, and provide a way to stop if the retry is no longer useful.
+
+**Cancelled** describes an intentional interruption, not necessarily an error. Cancellation should
+answer what stopped, what already completed, and what can resume. A local animation can stop
+immediately even if remote work takes longer to wind down; the interface still needs to avoid
+announcing completion after it has accepted the cancellation.
+
+**Undone** means the system reversed a completed or optimistic action. This state deserves its own
+language because it restores confidence: identify what was restored, return focus sensibly if the
+interface changed shape, and make the final state unambiguous. Undo is not a decorative toast. It is
+a short-lived transaction with a deadline and an outcome.
+
+## Give every state a behavioral contract
+
+Naming states is useful only if it changes behavior. For each one, I write down four parts: the
+data shown, the actions allowed, the route to recovery, and the accessibility behavior.
+
+Take a generic data view. During initial loading, its heading and surrounding navigation can remain
+stable while the result region exposes a useful status. In an empty state, focus stays where the
+person put it; the page does not jump to an illustration. In a partial state, available rows remain
+navigable, but an aggregate action is disabled or reframed if it would claim to cover missing data.
+If a background refresh fails, the existing rows can remain visible with a stale marker and a Retry
+action. Retrying updates the status without rebuilding the page's focus order.
+
+The same contract has to account for announcements. Visual change is not automatically perceivable
+change. A polite live region can report that results loaded, a retry began, or an operation failed,
+but announcing every small fluctuation creates noise. Focus should move only when movement is part
+of recovery: to a field with a blocking validation problem, for example, not to every banner that
+appears. Loading indicators need text. Error relationships need to be programmatic. Color can
+reinforce state but cannot be its only carrier.
+
+The contract also makes tests better. Instead of one test that proves the successful click path, I
+can ask whether a draft survives failure, whether late data is ignored after cancellation, whether
+Retry is reachable by keyboard, and whether Undo restores both the record and the expected focus
+target. Those assertions test the product's promises rather than its screenshots.
+
+## Recovery is a design material
+
+The biggest lesson I carried from QA into design engineering is that reliability has an interface.
+People cannot inspect a request log or read application state. They infer reliability from whether
+the product keeps context, tells the truth, and gives them a credible next move.
+
+That is why I care about preserving a filled form after an error, retaining readable data during a
+refresh, and distinguishing Cancel from Fail. Those choices reduce the amount of trust a person has
+to extend blindly. Retry says the action can be attempted again. Undo says a completed action can
+be reversed. A stale marker says the system knows the limits of its own information. Each is a
+small piece of honest product language.
+
+QA did not teach me to imagine every possible catastrophe. It taught me to stop calling predictable
+conditions exceptional. Networks wait. Data is absent. Requests overlap. People change their minds.
+A complete interface does not merely survive those facts; it gives each one a clear state, a safe
+action, and a way back.

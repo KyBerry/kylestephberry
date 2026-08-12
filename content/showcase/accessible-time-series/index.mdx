@@ -1,0 +1,32 @@
+---
+title: 'Accessible time series'
+summary: 'Inspect a weekly trend with a pointer, keyboard, screen reader, or plain data table.'
+publishedAt: '2026-07-21'
+tags: ['data', 'accessibility', 'keyboard', 'charts']
+featured: true
+mountStrategy: 'always'
+---
+
+Charts often become less usable at the exact moment they become interactive. A tooltip follows the
+pointer, but it disappears when the pointer leaves and never existed for a keyboard or screen reader
+user in the first place. I wanted this chart to treat inspection as a real control rather than a
+hover effect.
+
+The plot is one focusable horizontal slider. Its value is the selected week, so Left and Down move
+backward, Right and Up move forward, and Home and End jump to the boundaries. `aria-valuetext`
+combines the date, activation rate, and change from the previous week; the visual tooltip renders the
+same information and stays on screen after the pointer stops moving. One focus target also avoids
+making someone tab through twelve data points.
+
+The chart uses a thin sage line, light horizontal rules, and a guide at the selected point. Color is
+not responsible for explaining the current value. The header repeats it in text, and a short summary
+says what the series did before anyone starts scrubbing.
+
+The data toggle opens a native table with dates, values, and week-over-week changes, giving comparison
+tasks and screen reader navigation a structure they already understand. It complements the chart
+instead of relying on an accessible name pasted onto an otherwise opaque SVG.
+
+A slider supports sequential inspection rather than direct keyboard access to every point. For a
+twelve-week series that is predictable and compact. A multi-year series would need coarser jumps,
+range controls, or a different exploration model before adding hundreds of stops to the same
+interaction.

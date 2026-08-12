@@ -1,0 +1,27 @@
+---
+title: 'Async tree view'
+summary: 'Open branches as they load, recover from an error, and move through the tree without a pointer.'
+publishedAt: '2026-08-07'
+tags: ['accessibility', 'keyboard', 'async', 'interaction']
+featured: true
+mountStrategy: 'always'
+---
+
+This tree uses Writing, Components, and About from the site. A branch loads only when it opens, and
+nested branches wait until they are opened. Fixed delays make the loading and retry states repeatable
+in testing.
+
+The keyboard model follows the shape of the hierarchy. Up and Down move through the visible items,
+Home and End reach the boundaries, Right opens a branch or enters its first child, and Left closes a
+branch or returns to its parent. A short typeahead buffer jumps to the next visible label. Only one
+tree item participates in the page's tab order, and explicit `aria-level`, `aria-posinset`, and
+`aria-setsize` values preserve the hierarchy even though the rendered rows are flattened.
+
+The component tracks focus and selection independently. Arrowing through the tree changes the active
+row without changing the chosen object; Enter or Space toggles selection separately. The footer keeps
+the selected path visible while the focus ring is free to move.
+
+The first Components request fails so the retry path can be exercised reliably; Reset restores that
+state. One live region announces loading, failure, recovery, expansion, and selection. In a larger
+application, cancellation and caching would belong in the data layer while the keyboard contract
+remained at the tree boundary.

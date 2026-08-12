@@ -1,0 +1,30 @@
+---
+title: 'Keyboard-resizable split view'
+summary: 'Drag the divider or resize two writing panes from the keyboard. Small screens use a stacked layout.'
+publishedAt: '2026-07-27'
+tags: ['layout', 'accessibility', 'keyboard', 'interaction']
+featured: true
+mountStrategy: 'always'
+---
+
+Most resizable panes only document dragging. Here the divider is a focusable separator whose value
+reports the percentage assigned to the essay outline.
+
+Pointer movement and keyboard input update the same bounded number. The separator captures the
+pointer during a drag, so resizing continues even when the pointer outruns its narrow visual handle.
+Left and Right adjust by two percentage points, Page Up and Page Down adjust by ten, and Home and
+End move to the 28 and 72 percent limits. Up and Down are supported too. The separator reports its
+orientation, minimum, maximum, current value, and both controlled panel ids through ARIA.
+
+The 28% and 72% limits keep both panes usable. The draft retains a readable measure when the outline
+receives more space. Reset restores the default ratio, and double-clicking the separator provides the
+familiar desktop shortcut.
+
+Below the small breakpoint the component stops pretending that horizontal resizing is useful. The
+separator leaves the focus order, both regions stack at full width, and the header says that the
+layout is stacked. The content remains in document order, so the responsive change does not create
+a second mobile interaction model.
+
+The ratio stays in component state. Persisting it would only make sense if people repeatedly returned
+to the same workspace. Percentage sizing fits this responsive example; a code editor or dense data
+grid might need fixed widths instead.
